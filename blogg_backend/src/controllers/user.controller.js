@@ -2,6 +2,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
+import { ApiError } from "../utils/ApiError.js";
+
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -19,6 +21,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
   }
 };
 
+//register user functionality
 const registerUser = asyncHandler(async (req, res) => {
   //taking input from frontend
   const { username, fullName, password, email } = req.body;
@@ -85,6 +88,8 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(201)
     .json({ message: "User register successfully !", data: createdUser });
 });
+
+//user login functionality
 const loginUser = asyncHandler(async (req, res) => {
   try {
     //get username or email and password
@@ -163,4 +168,127 @@ const logoutUser = asyncHandler(async (req, res) => {
     .clearCookie("refreshToken", options)
     .json({ message: "user logged out !!" });
 });
-export { registerUser, loginUser, logoutUser };
+
+//refresh token update
+const refreshAccessToken = asyncHandler(async (req, res) => {
+  const incomingRefreshToken =
+    req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!incomingRefreshToken) {
+    throw new ApiError(401, "unauthorized request");
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      incomingRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET
+    );
+
+    const user = await User.findById(decodedToken?._id);
+
+    if (!user) {
+      throw new ApiError(401, "Invalid refresh token");
+    }
+
+    if (incomingRefreshToken !== user?.refreshToken) {
+      throw new ApiError(401, "Refresh token is expired or used");
+    }
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+
+    const { accessToken, newRefreshToken } =
+      await generateAccessAndRefereshTokens(user._id);
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", newRefreshToken, options)
+      .json(
+        new ApiResponse(
+          200,
+          { accessToken, refreshToken: newRefreshToken },
+          "Access token refreshed"
+        )
+      );
+  } catch (error) {
+    throw new ApiError(401, error?.message || "Invalid refresh token");
+  }
+});
+
+//change current password
+const changeCurrentPassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+
+  const user = await User.findById(req.user._id);
+  const isPasswordCorrect = user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordCorrect) {
+    return res.status(401).json({ message: "password is not correct !!" });
+  }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: false });
+
+  return res.status(200).json({ message: "password change successfully" });
+});
+
+//get current user
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json({ user: req.user, message: "User fetched successfully !!" });
+});
+
+//update account details
+const updateAccountDetails = asyncHandler(async (req, res) => {
+  const { fullName } = req.body;
+
+  if (!fullName) {
+    return res.status(401).json({ message: "field is required !!" });
+  }
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { fullName },
+    },
+    { new: true }
+  ).select("-password");
+
+  return res.status(200).json({ user, message: "name updated" });
+});
+
+//update avatar
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  const avatarLocalPath = req.file?.path;
+  if (!avatarLocalPath) {
+    return res.status(400).json({ message: "file path not find !!" });
+  }
+
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
+  if (!avatar.url) {
+    return res.status(400).json({ message: "file not uploaded" });
+  }
+
+  const user = await findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { avatar: avatar.url },
+    },
+    { new: true }
+  ).select("-password");
+
+  return res.status(200).json({ user, message: "profile image update" });
+});
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPassword,
+  getCurrentUser,
+  updateAccountDetails,
+  updateUserAvatar,
+};

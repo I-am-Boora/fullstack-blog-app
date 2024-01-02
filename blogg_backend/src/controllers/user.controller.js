@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-
+import bcrypt from "bcrypt";
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -63,13 +63,13 @@ const registerUser = asyncHandler(async (req, res) => {
   // if (!avatar) {
   //   res.status(301).json({ message: "file upload failed !!" });
   // }
-
+  const hashedPassword = await bcrypt.hash(password, 10);
   //save user to database
   const user = await User.create({
     fullName,
     avatar: avatar?.url || "",
     email,
-    password,
+    password: hashedPassword,
     username: username.toLowerCase(),
   });
 
@@ -89,9 +89,9 @@ const loginUser = asyncHandler(async (req, res) => {
   try {
     //get username or email and password
     const { username, email, password } = req.body;
-    console.log(email);
+    console.log(req.body.email, password);
     //check username or email in not empty
-    if (!username && !email) {
+    if (!(username || email)) {
       res.status(400).json({ message: "All fields are required !!" });
     }
     //find in database
@@ -105,6 +105,7 @@ const loginUser = asyncHandler(async (req, res) => {
 
     //check password is validate
     const isPasswordValid = await user.isPasswordCorrect(password);
+    console.log(isPasswordValid);
     if (!isPasswordValid) {
       return res
         .status(300)
@@ -130,9 +131,9 @@ const loginUser = asyncHandler(async (req, res) => {
       .cookie("refreshToken", refreshToken, options)
       .json({
         user: loggedUser,
-        // accessToken,
-        // refreshToken,
-        // message: "user login successfully !!",
+        accessToken,
+        refreshToken,
+        message: "user login successfully !!",
       });
   } catch (error) {
     console.error(error);

@@ -26,7 +26,7 @@ const registerUser = asyncHandler(async (req, res) => {
   //taking input from frontend
   const { username, fullName, password, email } = req.body;
   // console.log(username);
-
+  console.log(fullName, username, password);
   //check if the field is empty
   if (
     [username, fullName, password, email].some((field) => field?.trim() === "")
@@ -94,7 +94,7 @@ const loginUser = asyncHandler(async (req, res) => {
   try {
     //get username or email and password
     const { username, email, password } = req.body;
-    console.log(req.body.email, password);
+    console.log(username, email, password);
     //check username or email in not empty
     if (!(username || email)) {
       res.status(400).json({ message: "All fields are required !!" });
@@ -126,20 +126,22 @@ const loginUser = asyncHandler(async (req, res) => {
       "-password -refreshToken"
     );
 
-    const options = {
-      httpOnly: true,
-      secure: true,
-    };
-    return res
-      .status(200)
-      .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
-      .json({
-        user: loggedUser,
-        accessToken,
-        refreshToken,
-        message: "user login successfully !!",
-      });
+    // const options = {
+    //   httpOnly: true,
+    //   secure: true,
+    // };
+    return (
+      res
+        .status(200)
+        // .cookie("accessToken", accessToken, options)
+        // .cookie("refreshToken", refreshToken, options)
+        .json({
+          user: loggedUser,
+          accessToken,
+          refreshToken,
+          message: "user login successfully !!",
+        })
+    );
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

@@ -5,7 +5,6 @@ import {useTheme} from '@react-navigation/native';
 
 const InputBox = ({placeholder, secureTextEntry, value, handleInput}) => {
   const {colors} = useTheme();
-  console.log(colors);
   return (
     <View style={[styles.inputContainer, {borderColor: colors.borderColor}]}>
       <TextInput
@@ -15,7 +14,7 @@ const InputBox = ({placeholder, secureTextEntry, value, handleInput}) => {
         onChangeText={text => {
           handleInput(text);
         }}
-        placeholderTextColor={colors.text}
+        placeholderTextColor={colors.placeholderColor}
         value={value}
       />
     </View>

@@ -4,10 +4,12 @@ import {scale, verticalScale} from 'react-native-size-matters';
 import InputBox from '../src/component/InputBox';
 import CustomButton from '../src/component/CustomButton';
 import {useNavigation, useTheme} from '@react-navigation/native';
+import axios from 'axios';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [data, setData] = useState(null);
   const navigation = useNavigation();
   const {colors} = useTheme();
   const loginUsername = data => {
@@ -16,17 +18,38 @@ const LoginScreen = () => {
   const loginPassword = data => {
     setPassword(data);
   };
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Please enter correct value!');
     }
-    console.log(username, password);
+    await axios
+      .post(
+        'http://10.0.2.2:8080/users/login',
+        {
+          username: username,
+          password: password,
+        },
+        {maxRedirects: 5},
+      )
+      .then(function (response) {
+        console.log(response);
+        setData(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    // const result = await axios.post('http://192.168.62.248:8080/users/login', {
+    //   username,
+    //   password,
+    // });
+    // console.log(result);
     setUsername('');
     setPassword('');
   };
   const handleSignUp = () => {
     navigation.navigate('Register');
   };
+  console.log(data);
   return (
     <View
       style={{
@@ -34,7 +57,7 @@ const LoginScreen = () => {
         justifyContent: 'center',
       }}>
       <View style={styles.container}>
-        <Text style={styles.title}>Blogg App</Text>
+        <Text style={[styles.title, {color: colors.text}]}>Blogg App</Text>
         <Text style={[styles.login, {color: colors.text}]}>
           Login in account
         </Text>

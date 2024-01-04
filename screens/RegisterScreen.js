@@ -44,6 +44,7 @@ const RegisterScreen = () => {
       .catch(function (error) {
         console.log(error);
       });
+
     setFullName('');
     setUsername('');
     setEmail('');

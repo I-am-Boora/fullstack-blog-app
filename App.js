@@ -28,6 +28,7 @@ const App = () => {
           name="Home"
           component={HomeScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <TabBarIcon
                 name="home"

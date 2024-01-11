@@ -59,6 +59,7 @@ const App = () => {
           name="Post"
           component={PostScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <TabBarIcon
                 name="add-circle"

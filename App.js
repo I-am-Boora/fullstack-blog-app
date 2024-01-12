@@ -120,6 +120,7 @@ const App = () => {
           name="Profile"
           component={ProfileScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <TabBarIcon
                 name="person"

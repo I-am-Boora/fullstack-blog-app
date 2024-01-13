@@ -94,6 +94,6 @@ const styles = StyleSheet.create({
   },
   headingTitle: {
     fontSize: moderateScale(18),
-    fontFamily: 'Roboto-Bold',
+    fontFamily: 'Poppins-Medium',
   },
 });

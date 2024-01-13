@@ -9,6 +9,7 @@ export const darkTheme = {
     background: '#212121',
     lightBlack: '#424242',
     borderColor: '#8c9eff',
+    secondaryBackground: '#353634',
   },
 };
 
@@ -23,5 +24,6 @@ export const lightTheme = {
     background: '#ffffff',
     lightBlack: '#424242',
     borderColor: '#424242',
+    secondaryBackground: '#8c9eff',
   },
 };

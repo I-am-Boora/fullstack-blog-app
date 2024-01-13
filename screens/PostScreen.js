@@ -38,13 +38,18 @@ const PostScreen = () => {
       }
     });
   };
+  console.log(photo.assets[0].fileName);
   return (
     <ScrollView style={styles.container}>
       <Text style={[styles.title, {color: colors.text}]}>Create Post</Text>
       <View style={[styles.imageContainer, {borderColor: colors.secondary}]}>
         <Pressable style={styles.imageComponent} onPress={handleChoosePhoto}>
           <Icon name="image-outline" size={24} />
-          <Text style={styles.imageText}>Upload image</Text>
+          {photo.assets ? (
+            <Text style={styles.imageText}>{photo.assets[0].fileName}</Text>
+          ) : (
+            <Text style={styles.imageText}>Upload image</Text>
+          )}
         </Pressable>
       </View>
       <InputBox

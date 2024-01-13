@@ -16,15 +16,15 @@ const PostComponent = () => {
         />
       </View>
       <View style={styles.rightContainer}>
-        <Text>Programming</Text>
+        <Text style={styles.authorTitle}>Programming</Text>
         <Text
           style={[styles.postTitle, {color: colors.text}]}
           numberOfLines={2}>
           How to make react native more optimize?
         </Text>
         <View style={styles.authorSection}>
-          <Text>sonu boora ・ </Text>
-          <Text>10 Jan 2024</Text>
+          <Text style={styles.authorTitle}>sonu boora ・ </Text>
+          <Text style={styles.authorTitle}>10 Jan 2024</Text>
         </View>
       </View>
     </View>
@@ -62,5 +62,8 @@ const styles = StyleSheet.create({
   authorSection: {
     flexDirection: 'row',
     paddingBottom: verticalScale(3),
+  },
+  authorTitle: {
+    fontFamily: 'Poppins-Regular',
   },
 });

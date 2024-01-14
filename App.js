@@ -23,7 +23,25 @@ const App = () => {
   };
   function BottomTabNavigator() {
     return (
-      <Bottom.Navigator>
+      <Bottom.Navigator
+        screenOptions={{
+          tabBarStyle: {
+            borderRadius: 10,
+            backgroundColor: 'white',
+            width: '95%',
+            alignSelf: 'center',
+            marginBottom: 10,
+            borderTopColor: 'white',
+            height: 60,
+          },
+          tabBarIconStyle: {
+            marginTop: 3,
+          },
+          tabBarLabelStyle: {
+            paddingBottom: 5,
+            fontWeight: '500',
+          },
+        }}>
         <Bottom.Screen
           name="Home"
           component={HomeScreen}
@@ -37,22 +55,6 @@ const App = () => {
                 size={size}
               />
             ),
-            tabBarStyle: {
-              borderRadius: 10,
-              backgroundColor: 'white',
-              width: '95%',
-              alignSelf: 'center',
-              marginBottom: 10,
-              borderTopColor: 'white',
-              height: 50,
-            },
-            tabBarIconStyle: {
-              marginTop: 3,
-            },
-            tabBarLabelStyle: {
-              paddingBottom: 5,
-              fontWeight: '500',
-            },
           }}
         />
         <Bottom.Screen
@@ -68,22 +70,6 @@ const App = () => {
                 size={size}
               />
             ),
-            tabBarStyle: {
-              borderRadius: 10,
-              backgroundColor: 'white',
-              width: '95%',
-              alignSelf: 'center',
-              marginBottom: 10,
-              borderTopColor: 'white',
-              height: 50,
-            },
-            tabBarIconStyle: {
-              marginTop: 3,
-            },
-            tabBarLabelStyle: {
-              paddingBottom: 5,
-              fontWeight: '500',
-            },
           }}
         />
         <Bottom.Screen
@@ -98,22 +84,6 @@ const App = () => {
                 size={size}
               />
             ),
-            tabBarStyle: {
-              borderRadius: 10,
-              backgroundColor: 'white',
-              width: '95%',
-              alignSelf: 'center',
-              marginBottom: 10,
-              borderTopColor: 'white',
-              height: 50,
-            },
-            tabBarIconStyle: {
-              marginTop: 3,
-            },
-            tabBarLabelStyle: {
-              paddingBottom: 5,
-              fontWeight: '500',
-            },
           }}
         />
         <Bottom.Screen
@@ -129,22 +99,6 @@ const App = () => {
                 size={size}
               />
             ),
-            tabBarStyle: {
-              borderRadius: 10,
-              backgroundColor: 'white',
-              width: '95%',
-              alignSelf: 'center',
-              marginBottom: 10,
-              borderTopColor: 'white',
-              height: 50,
-            },
-            tabBarIconStyle: {
-              marginTop: 3,
-            },
-            tabBarLabelStyle: {
-              paddingBottom: 5,
-              fontWeight: '500',
-            },
           }}
         />
       </Bottom.Navigator>

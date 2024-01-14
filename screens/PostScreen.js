@@ -13,6 +13,7 @@ import CustomButton from '../src/component/CustomButton';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useTheme} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import axios from 'axios';
 
 const PostScreen = () => {
   const [category, setCategory] = useState('');
@@ -26,26 +27,64 @@ const PostScreen = () => {
   const handleTitle = data => {
     setTitle(data);
   };
-  const handlePost = () => {
-    console.log(category, title, content);
+  const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append('photo', {
+      uri: photo.assets[0].uri,
+      type: photo.assets[0].type,
+      name: photo.assets[0].fileName,
+    });
+
+    try {
+      const response = await axios.post(
+        'http://10.0.2.2:8080/users/createPost',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+
+      console.log('Image uploaded successfully', response.data);
+    } catch (error) {
+      console.error('Error uploading image', error);
+    }
+  };
+
+  const handlePost = async () => {
+    await axios
+      .post('http://10.0.2.2:8080/users/createPost', {
+        title,
+        category,
+        content,
+      })
+      .then(function (response) {
+        console.log(response.data);
+        //  setData(response.data);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+    uploadImage();
   };
 
   const handleChoosePhoto = async () => {
     await launchImageLibrary({noData: true}, response => {
       // console.log(response);
-      if (response) {
+      if (response && response.assets) {
         setPhoto(response);
       }
     });
   };
-  console.log(photo.assets[0].fileName);
+  // console.log(photo.assets[0].fileName);
   return (
     <ScrollView style={styles.container}>
       <Text style={[styles.title, {color: colors.text}]}>Create Post</Text>
-      <View style={[styles.imageContainer, {borderColor: colors.secondary}]}>
+      <View style={[styles.imageContainer, {borderColor: colors.borderColor}]}>
         <Pressable style={styles.imageComponent} onPress={handleChoosePhoto}>
           <Icon name="image-outline" size={24} />
-          {photo.assets ? (
+          {photo && photo.assets ? (
             <Text style={styles.imageText}>{photo.assets[0].fileName}</Text>
           ) : (
             <Text style={styles.imageText}>Upload image</Text>
@@ -64,7 +103,7 @@ const PostScreen = () => {
         value={title}
         secureTextEntry={false}
       />
-      <View style={[styles.detailContainer, {borderColor: colors.secondary}]}>
+      <View style={[styles.detailContainer, {borderColor: colors.borderColor}]}>
         <TextInput
           multiline={true}
           numberOfLines={4}
@@ -102,7 +141,7 @@ const styles = StyleSheet.create({
     width: '95%',
   },
   imageContainer: {
-    borderWidth: moderateScale(1),
+    borderWidth: moderateScale(0.7),
     borderRadius: moderateScale(7),
 
     justifyContent: 'center',

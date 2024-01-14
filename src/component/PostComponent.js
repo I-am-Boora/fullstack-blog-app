@@ -6,7 +6,14 @@ import {useTheme} from '@react-navigation/native';
 const PostComponent = () => {
   const {colors} = useTheme();
   return (
-    <View style={[styles.postContainer, {borderColor: colors.borderColor}]}>
+    <View
+      style={[
+        styles.postContainer,
+        {
+          // borderColor: colors.borderColor,
+          backgroundColor: colors.secondaryBackground,
+        },
+      ]}>
       <View style={styles.leftContainer}>
         <Image
           source={{
@@ -35,7 +42,7 @@ export default PostComponent;
 
 const styles = StyleSheet.create({
   postContainer: {
-    borderWidth: moderateScale(0.7),
+    // borderWidth: moderateScale(0.7),
     borderRadius: moderateScale(15),
     flexDirection: 'row',
     marginVertical: verticalScale(3),

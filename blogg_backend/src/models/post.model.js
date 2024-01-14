@@ -10,7 +10,11 @@ const postSchema = new Schema(
       type: String,
       require: true,
     },
-    image: {
+    category: {
+      type: String,
+      require: true,
+    },
+    photo: {
       type: String, //cloudary url
     },
     author: {

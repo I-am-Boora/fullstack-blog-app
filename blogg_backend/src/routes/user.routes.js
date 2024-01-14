@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   changeCurrentPassword,
+  createPost,
   getCurrentUser,
   loginUser,
   refreshAccessToken,
@@ -33,6 +34,15 @@ router.route("/register").post(
 );
 
 router.route("/login").post(loginUser);
+router.route("/createPost").post(
+  upload.fields([
+    {
+      name: "photo",
+      maxCount: 1,
+    },
+  ]),
+  createPost
+);
 router.route("/refresh-token").post(refreshAccessToken);
 router.route("/change-password").post(verifyJWT, changeCurrentPassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);

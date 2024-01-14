@@ -76,7 +76,7 @@ const styles = StyleSheet.create({
   profileContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-
+    elevation: 4,
     padding: moderateScale(10),
     marginTop: verticalScale(25),
     borderRadius: moderateScale(15),
@@ -95,7 +95,6 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(5),
   },
   followerandpost: {
-    // width: '80%',
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -121,12 +120,12 @@ const styles = StyleSheet.create({
   },
   allpost: {
     borderRadius: moderateScale(15),
-    // marginVertical: verticalScale(10),
     marginTop: verticalScale(10),
     height: 50,
     padding: scale(5),
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
+    elevation: 4,
   },
 });

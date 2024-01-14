@@ -25,7 +25,7 @@ export default InputBox;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    borderWidth: moderateScale(1),
+    borderWidth: moderateScale(0.7),
     borderRadius: moderateScale(8),
     width: '100%',
     marginVertical: verticalScale(10),

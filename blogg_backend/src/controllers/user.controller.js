@@ -3,6 +3,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { ApiError } from "../utils/ApiError.js";
+import { Post } from "../models/post.model.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -14,10 +15,13 @@ const generateAccessAndRefereshTokens = async (userId) => {
     await user.save({ validateBeforeSave: false });
     return { accessToken, refreshToken };
   } catch (error) {
-    res.status(500).json({
-      message:
-        "something went wrong while generating access and refresh token !!",
-    });
+    throw new Error(
+      "something went wrong while generating access and refresh token !!"
+    );
+    // res.status(500).json({
+    //   message:
+    //     "something went wrong while generating access and refresh token !!",
+    // });
   }
 };
 
@@ -87,6 +91,29 @@ const registerUser = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json({ message: "User register successfully !", data: createdUser });
+});
+
+//create post
+const createPost = asyncHandler(async (req, res) => {
+  const { category, title, content } = req.body;
+  let postLocalPath;
+  if (
+    req.files &&
+    Array.isArray(req.files.photo) &&
+    req.files.photo.length > 0
+  ) {
+    postLocalPath = req.files?.photo[0]?.path;
+  }
+
+  const photo = await uploadOnCloudinary(postLocalPath);
+  const user = await Post.create({
+    title,
+    photo: photo?.url || "",
+    category,
+    content,
+  });
+
+  return res.status(201).json({ message: "Posted", data: user });
 });
 
 //user login functionality
@@ -293,4 +320,5 @@ export {
   getCurrentUser,
   updateAccountDetails,
   updateUserAvatar,
+  createPost,
 };

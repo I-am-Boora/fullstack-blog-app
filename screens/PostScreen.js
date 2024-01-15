@@ -27,14 +27,41 @@ const PostScreen = () => {
   const handleTitle = data => {
     setTitle(data);
   };
-  const uploadImage = async () => {
+  // const uploadImage = async () => {
+  //   const formData = new FormData();
+  //   formData.append('photo', {
+  //     uri: photo.assets[0].uri,
+  //     type: photo.assets[0].type,
+  //     name: photo.assets[0].fileName,
+  //   });
+
+  //   try {
+  //     const response = await axios.post(
+  //       'http://10.0.2.2:8080/users/createPost',
+  //       formData,
+  //       {
+  //         headers: {
+  //           'Content-Type': 'multipart/form-data',
+  //         },
+  //       },
+  //     );
+
+  //     console.log('Image uploaded successfully', response.data);
+  //   } catch (error) {
+  //     console.error('Error uploading image', error);
+  //   }
+  // };
+
+  const handlePost = async () => {
     const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    formData.append('category', category);
     formData.append('photo', {
       uri: photo.assets[0].uri,
       type: photo.assets[0].type,
       name: photo.assets[0].fileName,
     });
-
     try {
       const response = await axios.post(
         'http://10.0.2.2:8080/users/createPost',
@@ -50,23 +77,6 @@ const PostScreen = () => {
     } catch (error) {
       console.error('Error uploading image', error);
     }
-  };
-
-  const handlePost = async () => {
-    await axios
-      .post('http://10.0.2.2:8080/users/createPost', {
-        title,
-        category,
-        content,
-      })
-      .then(function (response) {
-        console.log(response.data);
-        //  setData(response.data);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-    uploadImage();
   };
 
   const handleChoosePhoto = async () => {

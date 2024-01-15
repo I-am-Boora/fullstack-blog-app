@@ -7,18 +7,19 @@ import {
   Image,
   ImageBackground,
 } from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 import {gridData} from '../src/utils/data';
 import InputBox from '../src/component/InputBox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PostComponent from '../src/component/PostComponent';
+import {userContext} from '../src/utils/UserContextProvider';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
-  useEffectct(() => {}, []);
-
+  const {posts} = useContext(userContext);
+  console.log(posts);
   return (
     <ScrollView style={styles.container}>
       <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
@@ -101,9 +102,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: scale(15),
   },
   title: {
-    fontSize: moderateScale(35),
+    fontSize: moderateScale(40),
     fontFamily: 'Lora-VariableFont_wght',
-    marginVertical: verticalScale(20),
+    marginVertical: verticalScale(10),
   },
   categoryContainer: {
     width: 200,

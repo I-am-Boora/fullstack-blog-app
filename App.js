@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Alert, useColorScheme} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import LoginScreen from './screens/LoginScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import StackNavigation from './navigation/StackNavigation';
@@ -10,6 +10,10 @@ import PostScreen from './screens/PostScreen';
 import SavedScreen from './screens/SavedScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  userContext,
+  UserContextProvider,
+} from './src/utils/UserContextProvider';
 
 const App = () => {
   const colorSchem = useColorScheme();
@@ -105,10 +109,13 @@ const App = () => {
     );
   }
   return (
-    <NavigationContainer theme={colorSchem === 'dark' ? darkTheme : lightTheme}>
-      {/* <StackNavigation /> */}
-      <BottomTabNavigator />
-    </NavigationContainer>
+    <UserContextProvider>
+      <NavigationContainer
+        theme={colorSchem === 'dark' ? darkTheme : lightTheme}>
+        {/* <StackNavigation /> */}
+        <BottomTabNavigator />
+      </NavigationContainer>
+    </UserContextProvider>
   );
 };
 

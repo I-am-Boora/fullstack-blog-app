@@ -6,8 +6,9 @@ import {
   TextInput,
   Image,
   ImageBackground,
+  FlatList,
 } from 'react-native';
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 import {gridData} from '../src/utils/data';
@@ -15,13 +16,31 @@ import InputBox from '../src/component/InputBox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PostComponent from '../src/component/PostComponent';
 import {userContext} from '../src/utils/UserContextProvider';
+import axios from 'axios';
 
 const HomeScreen = () => {
   const {colors} = useTheme();
-  const {posts} = useContext(userContext);
-  console.log(posts);
+  const {posts, setPosts} = useContext(userContext);
+  // const [posts, setPosts] = useState([]);
+  // console.log(posts);
+  useEffect(() => {
+    const getAllPosts = async () => {
+      await axios
+        .get('http://10.0.2.2:8080/users/allPosts')
+        .then(function (response) {
+          // console.log(response);
+          setPosts(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    };
+
+    getAllPosts();
+  }, []);
+  // console.log(posts.data[0].category);
   return (
-    <ScrollView style={styles.container}>
+    <View style={styles.container}>
       <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
       <View
         style={[
@@ -82,16 +101,13 @@ const HomeScreen = () => {
       <Text style={[styles.headingTitle, {color: colors.text}]}>
         Latest Blog
       </Text>
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-      <PostComponent />
-    </ScrollView>
+      <FlatList
+        data={posts.data}
+        renderItem={({item, index}) => <PostComponent item={item} />}
+        keyExtractor={item => item._id}
+        scrollEnabled={true}
+      />
+    </View>
   );
 };
 

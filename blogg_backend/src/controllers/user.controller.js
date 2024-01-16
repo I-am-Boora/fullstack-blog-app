@@ -106,16 +106,23 @@ const createPost = asyncHandler(async (req, res) => {
   }
 
   const photo = await uploadOnCloudinary(postLocalPath);
-  const user = await Post.create({
+  const post = await Post.create({
     title,
     photo: photo?.url || "",
     category,
     content,
   });
-
-  return res.status(201).json({ message: "Posted", data: user });
+  console.log(post);
+  // const posts = await Post.find()
+  return res.status(201).json({ message: "Posted", data: post });
 });
 
+//get all posts
+const allPosts = asyncHandler(async (req, res) => {
+  const posts = await Post.find();
+  // console.log(posts);
+  return res.json({ message: "all posts", data: posts });
+});
 //user login functionality
 const loginUser = asyncHandler(async (req, res) => {
   try {
@@ -321,4 +328,5 @@ export {
   updateAccountDetails,
   updateUserAvatar,
   createPost,
+  allPosts,
 };

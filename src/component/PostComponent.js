@@ -3,8 +3,9 @@ import React from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 
-const PostComponent = () => {
+const PostComponent = ({item}) => {
   const {colors} = useTheme();
+  console.log(item.category);
   return (
     <View
       style={[
@@ -17,21 +18,21 @@ const PostComponent = () => {
       <View style={styles.leftContainer}>
         <Image
           source={{
-            uri: 'https://images.pexels.com/photos/574077/pexels-photo-574077.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+            uri: item.photo,
           }}
           style={styles.image}
         />
       </View>
       <View style={styles.rightContainer}>
-        <Text style={styles.authorTitle}>Programming</Text>
+        <Text style={styles.authorTitle}>{item.category}</Text>
         <Text
           style={[styles.postTitle, {color: colors.text}]}
           numberOfLines={2}>
-          How to make react native more optimize?
+          {item.title}
         </Text>
         <View style={styles.authorSection}>
           <Text style={styles.authorTitle}>sonu boora ・ </Text>
-          <Text style={styles.authorTitle}>10 Jan 2024</Text>
+          <Text style={styles.authorTitle}>{item.updatedAt}</Text>
         </View>
       </View>
     </View>

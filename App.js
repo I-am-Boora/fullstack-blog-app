@@ -14,10 +14,13 @@ import {
   userContext,
   UserContextProvider,
 } from './src/utils/UserContextProvider';
+import {createStackNavigator} from '@react-navigation/stack';
+import PostDetail from './screens/PostDetail';
 
 const App = () => {
   const colorSchem = useColorScheme();
   const Bottom = createBottomTabNavigator();
+  const Stack = createStackNavigator();
   const TabBarIcon = ({focused, name, color, size}) => {
     return focused ? (
       <Icon name={name} color={color} size={size} />
@@ -25,6 +28,19 @@ const App = () => {
       <Icon name={`${name}-outline`} color={color} size={size} />
     );
   };
+
+  function StackNavigation() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen
+          name="HomeScreen"
+          component={HomeScreen}
+          options={{headerShown: false}}
+        />
+        <Stack.Screen name="PostDetail" component={PostDetail} options={{}} />
+      </Stack.Navigator>
+    );
+  }
   function BottomTabNavigator() {
     return (
       <Bottom.Navigator
@@ -48,7 +64,7 @@ const App = () => {
         }}>
         <Bottom.Screen
           name="Home"
-          component={HomeScreen}
+          component={StackNavigation}
           options={{
             headerShown: false,
             tabBarIcon: ({focused, color, size}) => (

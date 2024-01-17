@@ -1,13 +1,18 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, View, Pressable} from 'react-native';
 import React from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 
-const PostComponent = ({item}) => {
+const PostComponent = ({item, navigation}) => {
   const {colors} = useTheme();
-  console.log(item.category);
+  // const onPressHandle = title => {
+  // };
+
   return (
-    <View
+    <Pressable
+      onPress={() => {
+        navigation.navigate('PostDetail');
+      }}
       style={[
         styles.postContainer,
         {
@@ -35,7 +40,7 @@ const PostComponent = ({item}) => {
           <Text style={styles.authorTitle}>{item.updatedAt}</Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

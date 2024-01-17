@@ -11,14 +11,14 @@ import {
 import React, {useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
-import {gridData} from '../src/utils/data';
+// import {gridData} from '../src/utils/data';
 import InputBox from '../src/component/InputBox';
 import Icon from 'react-native-vector-icons/Ionicons';
 import PostComponent from '../src/component/PostComponent';
 import {userContext} from '../src/utils/UserContextProvider';
 import axios from 'axios';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
   const {colors} = useTheme();
   const {posts, setPosts} = useContext(userContext);
   // const [posts, setPosts] = useState([]);
@@ -39,75 +39,150 @@ const HomeScreen = () => {
     getAllPosts();
   }, []);
   // console.log(posts.data[0].category);
+  const renderHeader = () => {
+    return (
+      <View style={styles.container}>
+        <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
+        <View
+          style={[
+            styles.imageContainer,
+            {backgroundColor: colors.secondaryBackground},
+          ]}>
+          <ImageBackground
+            resizeMode="contain"
+            source={require('../src/assets/images/Thinking.png')}
+            style={styles.image}>
+            <View
+              style={{
+                justifyContent: 'center',
+                marginTop: 30,
+                padding: 10,
+              }}>
+              <Text
+                style={{
+                  fontSize: moderateScale(30),
+                  fontWeight: 'bold',
+                  // fontFamily: 'Roboto-Bold',
+                  fontFamily: 'Poppins-Bold',
+                  color: colors.secondary,
+                }}>
+                Write
+              </Text>
+              <Text
+                style={{
+                  fontSize: moderateScale(30),
+                  fontWeight: 'bold',
+                  fontFamily: 'Poppins-Bold',
+                  color: colors.secondary,
+                }}>
+                Blog
+              </Text>
+              <Text
+                style={{
+                  fontSize: moderateScale(30),
+                  fontWeight: 'bold',
+                  fontFamily: 'Poppins-Bold',
+                  color: colors.secondary,
+                }}>
+                Here
+              </Text>
+            </View>
+          </ImageBackground>
+        </View>
+        <View
+          style={[
+            styles.inputContainer,
+            {
+              backgroundColor: colors.secondaryBackground,
+            },
+          ]}>
+          <TextInput placeholder="search here" style={styles.inputText} />
+          <Icon name="search" size={24} />
+        </View>
+        <Text style={[styles.headingTitle, {color: colors.text}]}>
+          Latest Blog
+        </Text>
+      </View>
+    );
+  };
+
   return (
-    <View style={styles.container}>
-      <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
-      <View
-        style={[
-          styles.imageContainer,
-          {backgroundColor: colors.secondaryBackground},
-        ]}>
-        <ImageBackground
-          resizeMode="contain"
-          source={require('../src/assets/images/Thinking.png')}
-          style={styles.image}>
-          <View
-            style={{
-              justifyContent: 'center',
-              marginTop: 30,
-              padding: 10,
-            }}>
-            <Text
-              style={{
-                fontSize: moderateScale(30),
-                fontWeight: 'bold',
-                // fontFamily: 'Roboto-Bold',
-                fontFamily: 'Poppins-Bold',
-                color: colors.secondary,
-              }}>
-              Write
-            </Text>
-            <Text
-              style={{
-                fontSize: moderateScale(30),
-                fontWeight: 'bold',
-                fontFamily: 'Poppins-Bold',
-                color: colors.secondary,
-              }}>
-              Blog
-            </Text>
-            <Text
-              style={{
-                fontSize: moderateScale(30),
-                fontWeight: 'bold',
-                fontFamily: 'Poppins-Bold',
-                color: colors.secondary,
-              }}>
-              Here
-            </Text>
-          </View>
-        </ImageBackground>
-      </View>
-      <View
-        style={[
-          styles.inputContainer,
-          {
-            backgroundColor: colors.secondaryBackground,
-          },
-        ]}>
-        <TextInput placeholder="search here" style={styles.inputText} />
-        <Icon name="search" size={24} />
-      </View>
-      <Text style={[styles.headingTitle, {color: colors.text}]}>
-        Latest Blog
-      </Text>
-      <FlatList
-        data={posts.data}
-        renderItem={({item, index}) => <PostComponent item={item} />}
-        keyExtractor={item => item._id}
-        scrollEnabled={true}
-      />
-    </View>
+    // <ScrollView style={styles.container}>
+    //   <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
+    //   <View
+    //     style={[
+    //       styles.imageContainer,
+    //       {backgroundColor: colors.secondaryBackground},
+    //     ]}>
+    //     <ImageBackground
+    //       resizeMode="contain"
+    //       source={require('../src/assets/images/Thinking.png')}
+    //       style={styles.image}>
+    //       <View
+    //         style={{
+    //           justifyContent: 'center',
+    //           marginTop: 30,
+    //           padding: 10,
+    //         }}>
+    //         <Text
+    //           style={{
+    //             fontSize: moderateScale(30),
+    //             fontWeight: 'bold',
+    //             // fontFamily: 'Roboto-Bold',
+    //             fontFamily: 'Poppins-Bold',
+    //             color: colors.secondary,
+    //           }}>
+    //           Write
+    //         </Text>
+    //         <Text
+    //           style={{
+    //             fontSize: moderateScale(30),
+    //             fontWeight: 'bold',
+    //             fontFamily: 'Poppins-Bold',
+    //             color: colors.secondary,
+    //           }}>
+    //           Blog
+    //         </Text>
+    //         <Text
+    //           style={{
+    //             fontSize: moderateScale(30),
+    //             fontWeight: 'bold',
+    //             fontFamily: 'Poppins-Bold',
+    //             color: colors.secondary,
+    //           }}>
+    //           Here
+    //         </Text>
+    //       </View>
+    //     </ImageBackground>
+    //   </View>
+    //   <View
+    //     style={[
+    //       styles.inputContainer,
+    //       {
+    //         backgroundColor: colors.secondaryBackground,
+    //       },
+    //     ]}>
+    //     <TextInput placeholder="search here" style={styles.inputText} />
+    //     <Icon name="search" size={24} />
+    //   </View>
+    //   <Text style={[styles.headingTitle, {color: colors.text}]}>
+    //     Latest Blog
+    //   </Text>
+    //   <FlatList
+    //     data={posts.data}
+    //     renderItem={({item, index}) => <PostComponent item={item} />}
+    //     keyExtractor={item => item._id}
+
+    //   />
+    // </ScrollView>
+    <FlatList
+      data={posts.data}
+      renderItem={({item, index}) => (
+        <PostComponent item={item} navigation={navigation} />
+      )}
+      keyExtractor={item => item._id}
+      ListHeaderComponent={renderHeader}
+    />
   );
 };
 

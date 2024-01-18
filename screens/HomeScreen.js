@@ -172,7 +172,6 @@ const HomeScreen = ({navigation}) => {
     //     data={posts.data}
     //     renderItem={({item, index}) => <PostComponent item={item} />}
     //     keyExtractor={item => item._id}
-
     //   />
     // </ScrollView>
     <FlatList

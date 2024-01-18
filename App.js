@@ -64,7 +64,7 @@ const App = () => {
         }}>
         <Bottom.Screen
           name="Home"
-          component={StackNavigation}
+          component={PostDetail}
           options={{
             headerShown: false,
             tabBarIcon: ({focused, color, size}) => (

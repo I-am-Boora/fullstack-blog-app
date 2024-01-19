@@ -7,12 +7,13 @@ import {
   TextInput,
   Pressable,
 } from 'react-native';
-import React from 'react';
+import React, {useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useTheme} from '@react-navigation/native';
 
 const PostDetail = () => {
+  const [saved, setSaved] = useState(false);
   const {colors} = useTheme();
   return (
     <ScrollView
@@ -43,9 +44,13 @@ const PostDetail = () => {
           </View>
           <Text style={{fontSize: 16, color: 'green'}}>follow</Text>
         </View>
-        <View>
-          <Icon name="bookmark-outline" size={24} />
-        </View>
+        <Pressable onPress={() => setSaved(!saved)}>
+          {saved ? (
+            <Icon name="bookmark" size={24} color={colors.secondary} />
+          ) : (
+            <Icon name="bookmark-outline" size={24} />
+          )}
+        </Pressable>
       </View>
 
       <Text style={[styles.blogTitle, {color: colors.text}]}>

@@ -123,6 +123,11 @@ const allPosts = asyncHandler(async (req, res) => {
   // console.log(posts);
   return res.json({ message: "all posts", data: posts });
 });
+const searchPost = asyncHandler(async (req, res) => {
+  const { Post_Id } = req.body;
+  const post = await Post.findById(Post_Id);
+  res.status(200).json({ post });
+});
 //user login functionality
 const loginUser = asyncHandler(async (req, res) => {
   try {
@@ -329,4 +334,5 @@ export {
   updateUserAvatar,
   createPost,
   allPosts,
+  searchPost,
 };

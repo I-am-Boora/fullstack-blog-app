@@ -7,12 +7,13 @@ const PostComponent = ({item, navigation}) => {
   const {colors} = useTheme();
   // const onPressHandle = title => {
   // };
+  const sendPostDetail = async Post_Id => {
+    navigation.navigate('PostDetail', {Post_Id});
+  };
 
   return (
     <Pressable
-      onPress={() => {
-        navigation.navigate('PostDetail');
-      }}
+      onPress={() => sendPostDetail(item._id)}
       style={[
         styles.postContainer,
         {

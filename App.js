@@ -37,7 +37,11 @@ const App = () => {
           component={HomeScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen name="PostDetail" component={PostDetail} options={{}} />
+        <Stack.Screen
+          name="PostDetail"
+          component={PostDetail}
+          options={{tabBarVisible: false, headerShown: false}}
+        />
       </Stack.Navigator>
     );
   }
@@ -64,7 +68,7 @@ const App = () => {
         }}>
         <Bottom.Screen
           name="Home"
-          component={PostDetail}
+          component={StackNavigation}
           options={{
             headerShown: false,
             tabBarIcon: ({focused, color, size}) => (

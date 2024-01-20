@@ -39,9 +39,9 @@ const ProfileScreen = () => {
             </View>
             <View style={styles.postContainer}>
               <Text style={[styles.profileName, {color: colors.text}]}>
-                Likes
+                Followings
               </Text>
-              <Text style={styles.post}>1M</Text>
+              <Text style={styles.post}>188</Text>
             </View>
             <View style={styles.postContainer}>
               <Text style={[styles.profileName, {color: colors.text}]}>
@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   profileName: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     fontFamily: 'Poppins-Medium',
     paddingVertical: verticalScale(5),
   },

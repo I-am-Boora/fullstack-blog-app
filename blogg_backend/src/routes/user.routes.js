@@ -7,6 +7,7 @@ import {
   loginUser,
   refreshAccessToken,
   registerUser,
+  searchPost,
   updateAccountDetails,
   updateUserAvatar,
 } from "../controllers/user.controller.js";
@@ -49,6 +50,7 @@ router.route("/change-password").post(verifyJWT, changeCurrentPassword);
 router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router.route("/allPosts").get(allPosts);
+router.route("/searchPost").post(searchPost);
 
 router
   .route("/avatar")

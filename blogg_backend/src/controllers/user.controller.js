@@ -4,6 +4,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import bcrypt from "bcrypt";
 import { ApiError } from "../utils/ApiError.js";
 import { Post } from "../models/post.model.js";
+import { Comment } from "../models/comment.model.js";
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -123,10 +124,23 @@ const allPosts = asyncHandler(async (req, res) => {
   // console.log(posts);
   return res.json({ message: "all posts", data: posts });
 });
+
+//search post and send it to post detail screen
 const searchPost = asyncHandler(async (req, res) => {
   const { Post_Id } = req.body;
   const post = await Post.findById(Post_Id);
   res.status(200).json({ post });
+});
+
+//comment
+const comment = asyncHandler(async (req, res) => {
+  const { Post_Id, content } = req.body;
+  console.log(Post_Id, content);
+  const newComment = await Comment.create({
+    content: content,
+    postID: Post_Id,
+  });
+  return res.status(200).json({ newComment });
 });
 //user login functionality
 const loginUser = asyncHandler(async (req, res) => {
@@ -335,4 +349,5 @@ export {
   createPost,
   allPosts,
   searchPost,
+  comment,
 };

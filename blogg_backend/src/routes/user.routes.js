@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   allPosts,
   changeCurrentPassword,
+  comment,
   createPost,
   getCurrentUser,
   loginUser,
@@ -51,6 +52,7 @@ router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router.route("/allPosts").get(allPosts);
 router.route("/searchPost").post(searchPost);
+router.route("/comment").post(comment);
 
 router
   .route("/avatar")

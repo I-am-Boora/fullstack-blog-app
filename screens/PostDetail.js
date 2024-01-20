@@ -20,6 +20,9 @@ const PostDetail = () => {
   const [saved, setSaved] = useState(false);
   const [postDetail, setPostDetail] = useState(null);
   const [formatDate, setFormatDate] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentTime, setCommentTime] = useState(null);
+  const [content, setContent] = useState('');
   const {colors} = useTheme();
   const route = useRoute();
   const {Post_Id} = route.params;
@@ -41,6 +44,22 @@ const PostDetail = () => {
     };
     getPostDetail();
   }, []);
+  console.log(comments);
+  const handleComment = async () => {
+    await axios
+      .post('http://10.0.2.2:8080/users/comment', {content, Post_Id})
+      .then(function (response) {
+        setComments(response.data.newComment);
+        console.log(response.data);
+        if (response.data.newComment) {
+          const data = getFormatedDate(response.data.newComment.createdAt);
+          setCommentTime(data);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   return (
     <ScrollView
@@ -115,11 +134,42 @@ const PostDetail = () => {
               borderRadius: moderateScale(10),
             }}
           />
+          {comments ? (
+            <View style={styles.commentContainer}>
+              <View>
+                <Image
+                  source={{
+                    uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                  }}
+                  style={styles.image}
+                />
+              </View>
+              <View>
+                <Text
+                  style={[
+                    styles.userDetail,
+                    {color: colors.text, fontFamily: 'Poppins-Medium'},
+                  ]}>
+                  sofia ansari
+                </Text>
+
+                <View style={{flexDirection: 'row', columnGap: 5}}>
+                  <Text style={{fontSize: 13}}>{commentTime?.date}</Text>
+                  <Text style={{fontSize: 13}}>{commentTime?.month}</Text>
+                  <Text style={{fontSize: 13}}>{commentTime?.year}</Text>
+                </View>
+              </View>
+            </View>
+          ) : null}
           <TextInput
             placeholder="write comment"
             style={[styles.inputBox, {borderColor: colors.borderColor}]}
+            value={content}
+            onChangeText={text => {
+              setContent(text);
+            }}
           />
-          <Pressable style={styles.commentBtn}>
+          <Pressable style={styles.commentBtn} onPress={handleComment}>
             <Text style={{fontSize: moderateScale(20)}}>OK</Text>
           </Pressable>
         </>
@@ -137,7 +187,6 @@ const PostDetail = () => {
     </ScrollView>
   );
 };
-
 export default PostDetail;
 
 const styles = StyleSheet.create({
@@ -178,6 +227,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#8c9eff',
     borderRadius: moderateScale(15),
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  commentContainer: {
+    flexDirection: 'row',
+    columnGap: 10,
     alignItems: 'center',
   },
 });

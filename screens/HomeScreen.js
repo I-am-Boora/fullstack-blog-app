@@ -19,10 +19,10 @@ import {userContext} from '../src/utils/UserContextProvider';
 import axios from 'axios';
 
 const HomeScreen = ({navigation}) => {
+  const [search, setSearch] = useState('');
   const {colors} = useTheme();
   const {posts, setPosts} = useContext(userContext);
-  // const [posts, setPosts] = useState([]);
-  // console.log(posts);
+
   useEffect(() => {
     const getAllPosts = async () => {
       await axios
@@ -38,7 +38,30 @@ const HomeScreen = ({navigation}) => {
 
     getAllPosts();
   }, []);
-  // console.log(posts.data[0].category);
+  console.log(search);
+  // useEffect(() => {
+  //   if (posts.data) {
+  //     var id = setInterval(() => {
+  //       searchblog();
+  //     }, 2000);
+  //   }
+
+  //   return () => {
+  //     clearInterval(id);
+  //   };
+  // }, []);
+
+  // const searchblog = search => {
+  //   const result = posts.data.filter(item => item.category === search);
+
+  //   return result;
+  // };
+
+  // if (posts.data) {
+  //   const result = searchblog();
+  //   console.log(result);
+  // }
+
   const renderHeader = () => {
     return (
       <View style={styles.container}>
@@ -96,7 +119,14 @@ const HomeScreen = ({navigation}) => {
               backgroundColor: colors.secondaryBackground,
             },
           ]}>
-          <TextInput placeholder="search here" style={styles.inputText} />
+          <TextInput
+            placeholder="search here"
+            style={styles.inputText}
+            value={search}
+            onChangeText={text => setSearch(text)}
+            onFocus={() => console.log('TextInput focused')}
+            onBlur={() => console.log('TextInput blurred')}
+          />
           <Icon name="search" size={24} />
         </View>
         <Text style={[styles.headingTitle, {color: colors.text}]}>

@@ -119,23 +119,68 @@ const PostDetail = () => {
             style={styles.blogImage}
           />
           <Text style={styles.blogDetail}>{postDetail.content}</Text>
-          <Text
-            style={{
-              fontSize: moderateScale(16),
-              fontWeight: 'bold',
-            }}>
-            Comments
-          </Text>
           <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}>
+            <View style={styles.commentTitleContainer}>
+              <Icon name="filter-outline" size={24} />
+              <Text
+                style={{
+                  fontSize: moderateScale(16),
+                  fontWeight: 'bold',
+                }}>
+                Comments
+              </Text>
+              <Text
+                style={{
+                  fontSize: moderateScale(14),
+                  fontWeight: '500',
+                }}>
+                0
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                columnGap: 10,
+              }}>
+              <Icon name="heart-outline" size={22} />
+              <Text
+                style={{
+                  fontSize: moderateScale(14),
+                  fontWeight: '500',
+                }}>
+                0
+              </Text>
+            </View>
+          </View>
+
+          {/* <View
             style={{
               width: scale(80),
               height: 4,
               backgroundColor: colors.secondaryBackground,
               borderRadius: moderateScale(10),
             }}
-          />
-          {comments ? (
-            <View style={styles.commentContainer}>
+          /> */}
+
+          <View
+            style={[
+              styles.commentContainer,
+              {backgroundColor: colors.secondaryBackground},
+            ]}>
+            <View
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                columnGap: 10,
+              }}>
               <View>
                 <Image
                   source={{
@@ -144,34 +189,27 @@ const PostDetail = () => {
                   style={styles.image}
                 />
               </View>
-              <View>
-                <Text
-                  style={[
-                    styles.userDetail,
-                    {color: colors.text, fontFamily: 'Poppins-Medium'},
-                  ]}>
-                  sofia ansari
-                </Text>
+              <TextInput
+                placeholder="write comment"
+                style={[
+                  styles.inputBox,
+                  {
+                    borderColor: colors.borderColor,
+                    flex: 1,
+                    // width: '70%',
+                    paddingHorizontal: scale(10),
 
-                <View style={{flexDirection: 'row', columnGap: 5}}>
-                  <Text style={{fontSize: 13}}>{commentTime?.date}</Text>
-                  <Text style={{fontSize: 13}}>{commentTime?.month}</Text>
-                  <Text style={{fontSize: 13}}>{commentTime?.year}</Text>
-                </View>
-              </View>
+                    height: 40,
+                  },
+                ]}
+                value={content}
+                onChangeText={text => {
+                  setContent(text);
+                }}
+              />
+              <Icon name="send-outline" size={24} />
             </View>
-          ) : null}
-          <TextInput
-            placeholder="write comment"
-            style={[styles.inputBox, {borderColor: colors.borderColor}]}
-            value={content}
-            onChangeText={text => {
-              setContent(text);
-            }}
-          />
-          <Pressable style={styles.commentBtn} onPress={handleComment}>
-            <Text style={{fontSize: moderateScale(20)}}>OK</Text>
-          </Pressable>
+          </View>
         </>
       ) : (
         <View
@@ -198,9 +236,9 @@ const styles = StyleSheet.create({
     marginTop: verticalScale(30),
   },
   image: {
-    width: scale(30),
-    height: verticalScale(30),
-    borderRadius: moderateScale(30),
+    width: scale(40),
+    height: verticalScale(40),
+    borderRadius: moderateScale(40),
     resizeMode: 'cover',
   },
   blogTitle: {
@@ -221,15 +259,15 @@ const styles = StyleSheet.create({
   inputBox: {
     borderBottomWidth: 1,
   },
-  commentBtn: {
-    width: '100%',
-    height: verticalScale(44),
-    backgroundColor: '#8c9eff',
-    borderRadius: moderateScale(15),
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   commentContainer: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: scale(8),
+    height: verticalScale(60),
+    borderRadius: moderateScale(15),
+  },
+  commentTitleContainer: {
     flexDirection: 'row',
     columnGap: 10,
     alignItems: 'center',

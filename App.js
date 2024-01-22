@@ -16,6 +16,7 @@ import {
 } from './src/utils/UserContextProvider';
 import {createStackNavigator} from '@react-navigation/stack';
 import PostDetail from './screens/PostDetail';
+import RegisterScreen from './screens/RegisterScreen';
 
 const App = () => {
   const colorSchem = useColorScheme();
@@ -29,6 +30,14 @@ const App = () => {
     );
   };
 
+  function LoginNavigation() {
+    return (
+      <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Register" component={RegisterScreen} />
+      </Stack.Navigator>
+    );
+  }
   function StackNavigation() {
     return (
       <Stack.Navigator>

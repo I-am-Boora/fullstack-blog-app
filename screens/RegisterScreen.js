@@ -62,7 +62,7 @@ const RegisterScreen = () => {
         <InputBox
           placeholder={'Enter full name'}
           secureTextEntry={false}
-          value={setFullName}
+          value={fullName}
           handleInput={handlefullName}
         />
         <InputBox

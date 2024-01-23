@@ -6,25 +6,25 @@ import { ApiError } from "../utils/ApiError.js";
 import { Post } from "../models/post.model.js";
 import { Comment } from "../models/comment.model.js";
 
-const generateAccessAndRefereshTokens = async (userId) => {
-  try {
-    const user = await User.findById(userId);
-    const accessToken = user.generateAccessToken();
-    const refreshToken = user.generateRefreshToken();
+// const generateAccessAndRefereshTokens = async (userId) => {
+//   try {
+//     const user = await User.findById(userId);
+//     const accessToken = user.generateAccessToken();
+//     const refreshToken = user.generateRefreshToken();
 
-    user.refreshToken = refreshToken;
-    await user.save({ validateBeforeSave: false });
-    return { accessToken, refreshToken };
-  } catch (error) {
-    throw new Error(
-      "something went wrong while generating access and refresh token !!"
-    );
-    // res.status(500).json({
-    //   message:
-    //     "something went wrong while generating access and refresh token !!",
-    // });
-  }
-};
+//     user.refreshToken = refreshToken;
+//     await user.save({ validateBeforeSave: false });
+//     return { accessToken, refreshToken };
+//   } catch (error) {
+//     throw new Error(
+//       "something went wrong while generating access and refresh token !!"
+//     );
+//     // res.status(500).json({
+//     //   message:
+//     //     "something went wrong while generating access and refresh token !!",
+//     // });
+//   }
+// };
 
 //register user functionality
 const registerUser = asyncHandler(async (req, res) => {
@@ -147,7 +147,7 @@ const loginUser = asyncHandler(async (req, res) => {
   try {
     //get username or email and password
     const { username, email, password } = req.body;
-    console.log(username, email, password);
+
     //check username or email in not empty
     if (!(username || email)) {
       res.status(400).json({ message: "All fields are required !!" });
@@ -158,7 +158,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!user) {
       return res
         .status(300)
-        .json({ message: "User or Email does not exist !!" });
+        .json({ message: "Username or Email does not exist !!" });
     }
 
     //check password is validate
@@ -169,32 +169,20 @@ const loginUser = asyncHandler(async (req, res) => {
         .status(300)
         .json({ message: "username and password is incorrect !!" });
     }
-
+    const token = await jwt.sign(process.env.ACCESS_TOKEN_SECRET);
     //generate access and refresh token
-    const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
-      user._id
-    );
-
-    const loggedUser = await User.findById(user._id).select(
-      "-password -refreshToken"
-    );
+    // const { accessToken } = await generateAccessAndRefereshTokens(user._id);
+    console.log(token);
+    const loggedUser = await User.findById(user._id).select("-password");
 
     // const options = {
     //   httpOnly: true,
     //   secure: true,
     // };
-    return (
-      res
-        .status(200)
-        // .cookie("accessToken", accessToken, options)
-        // .cookie("refreshToken", refreshToken, options)
-        .json({
-          user: loggedUser,
-          accessToken,
-          refreshToken,
-          message: "user login successfully !!",
-        })
-    );
+    return res.status(200).json({
+      user: loggedUser,
+      message: "user login successfully !!",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });

@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View, Alert, useColorScheme} from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import LoginScreen from './screens/LoginScreen';
 import {NavigationContainer} from '@react-navigation/native';
 import StackNavigation from './navigation/StackNavigation';
@@ -22,6 +22,9 @@ const App = () => {
   const colorSchem = useColorScheme();
   const Bottom = createBottomTabNavigator();
   const Stack = createStackNavigator();
+
+  useEffect(() => {}, []);
+
   const TabBarIcon = ({focused, name, color, size}) => {
     return focused ? (
       <Icon name={name} color={color} size={size} />
@@ -142,7 +145,8 @@ const App = () => {
       <NavigationContainer
         theme={colorSchem === 'dark' ? darkTheme : lightTheme}>
         {/* <StackNavigation /> */}
-        <BottomTabNavigator />
+        <LoginNavigation />
+        {/* <BottomTabNavigator /> */}
       </NavigationContainer>
     </UserContextProvider>
   );

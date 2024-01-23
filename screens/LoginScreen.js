@@ -1,10 +1,11 @@
 import {StyleSheet, Text, View, Alert} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {scale, verticalScale} from 'react-native-size-matters';
 import InputBox from '../src/component/InputBox';
 import CustomButton from '../src/component/CustomButton';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import axios from 'axios';
+import {userContext} from '../src/utils/UserContextProvider';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -12,6 +13,7 @@ const LoginScreen = () => {
   const [data, setData] = useState(null);
   const navigation = useNavigation();
   const {colors} = useTheme();
+  const {loginInfo, setLoginInfo} = useContext(userContext);
   const loginUsername = data => {
     setUsername(data);
   };
@@ -32,24 +34,24 @@ const LoginScreen = () => {
         {maxRedirects: 5},
       )
       .then(function (response) {
-        console.log(response);
-        setData(response.data);
+        console.log(response.data.data._id);
+        console.log(response.data.data);
+        setLoginInfo(response.data);
+        if (loginInfo) {
+          console.log(loginInfo.data._id);
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
-    // const result = await axios.post('http://192.168.62.248:8080/users/login', {
-    //   username,
-    //   password,
-    // });
-    // console.log(result);
+
     setUsername('');
     setPassword('');
   };
   const handleSignUp = () => {
     navigation.navigate('Register');
   };
-  console.log(data);
+
   return (
     <View
       style={{

@@ -6,6 +6,7 @@ import CustomButton from '../src/component/CustomButton';
 import {useNavigation, useTheme} from '@react-navigation/native';
 import axios from 'axios';
 import {userContext} from '../src/utils/UserContextProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -21,33 +22,33 @@ const LoginScreen = () => {
     setPassword(data);
   };
   const handleLogin = async () => {
-    if (!username || !password) {
-      Alert.alert('Please enter correct value!');
-    }
-    await axios
-      .post(
+    try {
+      const response = await axios.post(
         'http://10.0.2.2:8080/users/login',
         {
           username: username,
           password: password,
         },
-        {maxRedirects: 5},
-      )
-      .then(function (response) {
-        console.log(response.data.data._id);
-        console.log(response.data.data);
-        setLoginInfo(response.data);
-        if (loginInfo) {
-          console.log(loginInfo.data._id);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+        {
+          maxRedirects: 20, // or any higher number
+        },
+      );
 
-    setUsername('');
-    setPassword('');
+      // console.log(response.data);
+      setLoginInfo(response.data);
+
+      if (response.data) {
+        const token = response.data.accessToken;
+        await AsyncStorage.setItem('authToken', token);
+      }
+      // setUsername('');
+      // setPassword('');
+      navigation.navigate('Main');
+    } catch (error) {
+      console.log('Error in try block', error);
+    }
   };
+
   const handleSignUp = () => {
     navigation.navigate('Register');
   };

@@ -39,7 +39,7 @@ const RegisterScreen = () => {
         {maxRedirects: 5},
       )
       .then(function (response) {
-        console.log(response.data);
+        console.log('register successfully');
       })
       .catch(function (error) {
         console.log(error);

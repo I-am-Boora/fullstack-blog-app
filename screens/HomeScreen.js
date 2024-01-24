@@ -21,7 +21,7 @@ import axios from 'axios';
 const HomeScreen = ({navigation}) => {
   const [search, setSearch] = useState('');
   const {colors} = useTheme();
-  const {posts, setPosts} = useContext(userContext);
+  const {posts, setPosts, loginInfo} = useContext(userContext);
 
   useEffect(() => {
     const getAllPosts = async () => {

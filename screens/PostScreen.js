@@ -7,7 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import InputBox from '../src/component/InputBox';
 import CustomButton from '../src/component/CustomButton';
@@ -16,6 +16,7 @@ import {useTheme} from '@react-navigation/native';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import {nativeViewGestureHandlerProps} from 'react-native-gesture-handler/lib/typescript/handlers/NativeViewGestureHandler';
+import {userContext} from '../src/utils/UserContextProvider';
 
 const PostScreen = () => {
   const [category, setCategory] = useState('');
@@ -25,6 +26,7 @@ const PostScreen = () => {
   const [postData, setPostData] = useState(null);
   const [showBanner, setShowBanner] = useState(false);
   const {colors} = useTheme();
+  const {loginInfo} = useContext(userContext);
 
   const handleCategory = data => {
     setCategory(data);
@@ -117,6 +119,7 @@ const PostScreen = () => {
     formData.append('title', title);
     formData.append('content', content);
     formData.append('category', category);
+    formData.append('author', loginInfo?.user?._id);
     formData.append('photo', {
       uri: photo.assets[0].uri,
       type: photo.assets[0].type,

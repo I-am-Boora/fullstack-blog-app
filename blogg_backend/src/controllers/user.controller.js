@@ -5,26 +5,27 @@ import bcrypt from "bcrypt";
 import { ApiError } from "../utils/ApiError.js";
 import { Post } from "../models/post.model.js";
 import { Comment } from "../models/comment.model.js";
+import jwt from "jsonwebtoken";
 
-// const generateAccessAndRefereshTokens = async (userId) => {
-//   try {
-//     const user = await User.findById(userId);
-//     const accessToken = user.generateAccessToken();
-//     const refreshToken = user.generateRefreshToken();
+const generateAccessAndRefereshTokens = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
 
-//     user.refreshToken = refreshToken;
-//     await user.save({ validateBeforeSave: false });
-//     return { accessToken, refreshToken };
-//   } catch (error) {
-//     throw new Error(
-//       "something went wrong while generating access and refresh token !!"
-//     );
-//     // res.status(500).json({
-//     //   message:
-//     //     "something went wrong while generating access and refresh token !!",
-//     // });
-//   }
-// };
+    user.refreshToken = refreshToken;
+    await user.save({ validateBeforeSave: false });
+    return { accessToken, refreshToken };
+  } catch (error) {
+    throw new Error(
+      "something went wrong while generating access and refresh token !!"
+    );
+    // res.status(500).json({
+    //   message:
+    //     "something went wrong while generating access and refresh token !!",
+    // });
+  }
+};
 
 //register user functionality
 const registerUser = asyncHandler(async (req, res) => {
@@ -96,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 //create post
 const createPost = asyncHandler(async (req, res) => {
-  const { category, title, content } = req.body;
+  const { category, title, content, author } = req.body;
   let postLocalPath;
   if (
     req.files &&
@@ -112,6 +113,7 @@ const createPost = asyncHandler(async (req, res) => {
     photo: photo?.url || "",
     category,
     content,
+    author,
   });
   console.log(post);
   // const posts = await Post.find()
@@ -163,23 +165,26 @@ const loginUser = asyncHandler(async (req, res) => {
 
     //check password is validate
     const isPasswordValid = await user.isPasswordCorrect(password);
-    console.log(isPasswordValid);
+    // console.log(isPasswordValid);
     if (!isPasswordValid) {
       return res
         .status(300)
         .json({ message: "username and password is incorrect !!" });
     }
-    const token = await jwt.sign(process.env.ACCESS_TOKEN_SECRET);
+    // const token = jwt.sign(process.env.ACCESS_TOKEN_SECRET);
     //generate access and refresh token
-    // const { accessToken } = await generateAccessAndRefereshTokens(user._id);
-    console.log(token);
-    const loggedUser = await User.findById(user._id).select("-password");
+    const { accessToken } = await generateAccessAndRefereshTokens(user._id);
+    // console.log(token);
+    const loggedUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
 
     // const options = {
     //   httpOnly: true,
     //   secure: true,
     // };
     return res.status(200).json({
+      accessToken,
       user: loggedUser,
       message: "user login successfully !!",
     });

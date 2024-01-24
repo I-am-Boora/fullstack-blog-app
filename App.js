@@ -1,7 +1,7 @@
 import {StyleSheet, Text, View, Alert, useColorScheme} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import LoginScreen from './screens/LoginScreen';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, useNavigation} from '@react-navigation/native';
 import StackNavigation from './navigation/StackNavigation';
 import {darkTheme, lightTheme} from './src/utils/theme';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -17,13 +17,21 @@ import {
 import {createStackNavigator} from '@react-navigation/stack';
 import PostDetail from './screens/PostDetail';
 import RegisterScreen from './screens/RegisterScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
+  const [user, setUser] = useState(null);
   const colorSchem = useColorScheme();
   const Bottom = createBottomTabNavigator();
   const Stack = createStackNavigator();
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const getToken = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      setUser(token);
+    };
+    getToken();
+  }, []);
 
   const TabBarIcon = ({focused, name, color, size}) => {
     return focused ? (
@@ -33,14 +41,6 @@ const App = () => {
     );
   };
 
-  function LoginNavigation() {
-    return (
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="Register" component={RegisterScreen} />
-      </Stack.Navigator>
-    );
-  }
   function StackNavigation() {
     return (
       <Stack.Navigator>
@@ -140,13 +140,25 @@ const App = () => {
       </Bottom.Navigator>
     );
   }
+
+  const getInitialRoute = () => {
+    if (user) {
+      return 'Main';
+    } else {
+      return 'Login';
+    }
+  };
   return (
     <UserContextProvider>
       <NavigationContainer
         theme={colorSchem === 'dark' ? darkTheme : lightTheme}>
-        {/* <StackNavigation /> */}
-        <LoginNavigation />
-        {/* <BottomTabNavigator /> */}
+        <Stack.Navigator
+          initialRouteName={getInitialRoute()}
+          screenOptions={{headerShown: false}}>
+          <Stack.Screen name="Main" component={BottomTabNavigator} />
+          <Stack.Screen name="Login" component={LoginScreen} />
+          <Stack.Screen name="PostDetail" component={PostDetail} />
+        </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>
   );

@@ -159,15 +159,6 @@ const PostDetail = () => {
             </View>
           </View>
 
-          {/* <View
-            style={{
-              width: scale(80),
-              height: 4,
-              backgroundColor: colors.secondaryBackground,
-              borderRadius: moderateScale(10),
-            }}
-          /> */}
-
           <View
             style={[
               styles.commentContainer,
@@ -209,6 +200,42 @@ const PostDetail = () => {
               />
               <Icon name="send-outline" size={24} />
             </View>
+          </View>
+          <View
+            style={[
+              styles.commentDetailContainer,
+              {backgroundColor: colors.secondaryBackground},
+            ]}>
+            <View style={styles.userInfo}>
+              <View style={styles.imageContainer}>
+                <Image
+                  source={{
+                    uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                  }}
+                  style={styles.commentUserImage}
+                />
+              </View>
+              <View style={styles.userProfileContainer}>
+                <Text
+                  style={{fontSize: 15, color: colors.text, fontWeight: '500'}}>
+                  sonu boora
+                </Text>
+                <Text style={{fontSize: 12}}> 12 Jan 2024</Text>
+              </View>
+            </View>
+            <Text style={{fontSize: 14, lineHeight: 20}}>
+              This post is very helpful for me thankyou very much "My heart
+              skipped a beat when I saw this. ❤️" "Embracing the beauty captured
+              in this moment. 💖"
+            </Text>
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: '500',
+                color: colors.secondary,
+              }}>
+              Reply 0
+            </Text>
           </View>
         </>
       ) : (
@@ -271,5 +298,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 10,
     alignItems: 'center',
+  },
+  commentDetailContainer: {
+    rowGap: 5,
+    borderRadius: moderateScale(15),
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    columnGap: 10,
+  },
+  commentUserImage: {
+    width: scale(30),
+    height: verticalScale(30),
+    borderRadius: moderateScale(30),
+    resizeMode: 'cover',
   },
 });

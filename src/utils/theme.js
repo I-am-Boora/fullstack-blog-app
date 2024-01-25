@@ -8,7 +8,7 @@ export const darkTheme = {
     btnText: '#f5f5f5',
     background: '#212121',
     lightBlack: '#424242',
-    borderColor: '#8c9eff',
+    borderColor: '#0091ea',
     secondaryBackground: '#353634',
   },
 };

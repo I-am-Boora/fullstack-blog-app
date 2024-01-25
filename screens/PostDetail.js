@@ -23,6 +23,13 @@ const PostDetail = () => {
   const [comments, setComments] = useState([]);
   const [commentTime, setCommentTime] = useState(null);
   const [content, setContent] = useState('');
+  const [isClickOnReadMore, setIsClickOnReadMore] = useState(false);
+  const [isCommentLike, setIsCommentLike] = useState(false);
+  const [isPostLike, setIsPostLike] = useState(false);
+  const [string, setString] = useState({
+    comment:
+      'She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.',
+  });
   const {colors} = useTheme();
   const route = useRoute();
   const {Post_Id} = route.params;
@@ -64,7 +71,7 @@ const PostDetail = () => {
   return (
     <ScrollView
       contentContainerStyle={{
-        paddingHorizontal: scale(20),
+        paddingHorizontal: scale(10),
         rowGap: 10,
         marginBottom: verticalScale(20),
       }}>
@@ -102,7 +109,7 @@ const PostDetail = () => {
             </View>
             <Pressable onPress={() => setSaved(!saved)}>
               {saved ? (
-                <Icon name="bookmark" size={24} color={colors.secondary} />
+                <Icon name="bookmark" size={24} color={'#0091ea'} />
               ) : (
                 <Icon name="bookmark-outline" size={24} />
               )}
@@ -131,12 +138,13 @@ const PostDetail = () => {
                 style={{
                   fontSize: moderateScale(16),
                   fontWeight: 'bold',
+                  color: colors.text,
                 }}>
                 Comments
               </Text>
               <Text
                 style={{
-                  fontSize: moderateScale(14),
+                  fontSize: moderateScale(16),
                   fontWeight: '500',
                 }}>
                 0
@@ -146,15 +154,31 @@ const PostDetail = () => {
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                columnGap: 10,
+                columnGap: 5,
+                marginRight: scale(10),
               }}>
-              <Icon name="heart-outline" size={22} />
+              {isPostLike ? (
+                <Icon
+                  name="heart"
+                  size={22}
+                  color={'red'}
+                  onPress={() => setIsPostLike(!isPostLike)}
+                />
+              ) : (
+                <Icon
+                  name="heart-outline"
+                  size={22}
+                  color={'red'}
+                  onPress={() => setIsPostLike(!isPostLike)}
+                />
+              )}
+
               <Text
                 style={{
-                  fontSize: moderateScale(14),
+                  fontSize: moderateScale(16),
                   fontWeight: '500',
                 }}>
-                0
+                12
               </Text>
             </View>
           </View>
@@ -216,26 +240,65 @@ const PostDetail = () => {
                 />
               </View>
               <View style={styles.userProfileContainer}>
-                <Text
-                  style={{fontSize: 15, color: colors.text, fontWeight: '500'}}>
+                <Text style={{fontSize: 15, fontWeight: '500'}}>
                   sonu boora
                 </Text>
                 <Text style={{fontSize: 12}}> 12 Jan 2024</Text>
               </View>
             </View>
-            <Text style={{fontSize: 14, lineHeight: 20}}>
-              This post is very helpful for me thankyou very much "My heart
-              skipped a beat when I saw this. ❤️" "Embracing the beauty captured
-              in this moment. 💖"
-            </Text>
+
             <Text
               style={{
-                fontSize: 16,
-                fontWeight: '500',
-                color: colors.secondary,
+                fontSize: 14,
+                lineHeight: 20,
+                paddingHorizontal: scale(5),
+                color: colors.text,
               }}>
-              Reply 0
+              {isClickOnReadMore
+                ? string.comment
+                : string.comment.slice(0, 200)}
+
+              <Text
+                onPress={() => {
+                  setIsClickOnReadMore(!isClickOnReadMore);
+                }}
+                style={{fontWeight: '500'}}>
+                {string.comment.length > 200 &&
+                  (isClickOnReadMore ? ' Read less' : '...Read more')}
+              </Text>
             </Text>
+
+            <View style={styles.replyCommentSection}>
+              {isCommentLike ? (
+                <Icon
+                  name="heart"
+                  size={24}
+                  color={'red'}
+                  onPress={() => {
+                    setIsCommentLike(!isCommentLike);
+                  }}
+                />
+              ) : (
+                <Icon
+                  name="heart-outline"
+                  size={24}
+                  color={'red'}
+                  onPress={() => {
+                    setIsCommentLike(!isCommentLike);
+                  }}
+                />
+              )}
+
+              <Icon name="chatbubble-ellipses-outline" size={24} />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '500',
+                  color: '#0091ea',
+                }}>
+                Reply 0
+              </Text>
+            </View>
           </View>
         </>
       ) : (
@@ -305,13 +368,21 @@ const styles = StyleSheet.create({
   },
   userInfo: {
     flexDirection: 'row',
-    alignItems: 'center',
+    // alignItems: 'center',
     columnGap: 10,
+    marginTop: verticalScale(5),
+    marginLeft: scale(5),
   },
   commentUserImage: {
     width: scale(30),
     height: verticalScale(30),
     borderRadius: moderateScale(30),
     resizeMode: 'cover',
+  },
+  replyCommentSection: {
+    flexDirection: 'row',
+    marginLeft: scale(10),
+    columnGap: 10,
+    marginBottom: verticalScale(5),
   },
 });

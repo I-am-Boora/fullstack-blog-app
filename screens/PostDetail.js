@@ -51,7 +51,7 @@ const PostDetail = () => {
     };
     getPostDetail();
   }, []);
-  console.log(comments);
+  // console.log(comments);
   const handleComment = async () => {
     await axios
       .post('http://10.0.2.2:8080/users/comment', {content, Post_Id})
@@ -119,12 +119,15 @@ const PostDetail = () => {
           <Text style={[styles.blogTitle, {color: colors.text}]}>
             {postDetail.title}
           </Text>
-          <Image
-            source={{
-              uri: postDetail.photo,
-            }}
-            style={styles.blogImage}
-          />
+          {postDetail.photo && (
+            <Image
+              source={{
+                uri: postDetail.photo,
+              }}
+              style={styles.blogImage}
+            />
+          )}
+
           <Text style={styles.blogDetail}>{postDetail.content}</Text>
           <View
             style={{
@@ -294,7 +297,7 @@ const PostDetail = () => {
                 style={{
                   fontSize: 16,
                   fontWeight: '500',
-                  color: '#0091ea',
+                  color: '#00b4fc',
                 }}>
                 Reply 0
               </Text>

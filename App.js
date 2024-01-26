@@ -1,7 +1,11 @@
 import {StyleSheet, Text, View, Alert, useColorScheme} from 'react-native';
 import React, {useContext, useEffect, useState} from 'react';
 import LoginScreen from './screens/LoginScreen';
-import {NavigationContainer, useNavigation} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  useNavigation,
+  useTheme,
+} from '@react-navigation/native';
 import StackNavigation from './navigation/StackNavigation';
 import {darkTheme, lightTheme} from './src/utils/theme';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
@@ -24,20 +28,20 @@ const App = () => {
   const colorSchem = useColorScheme();
   const Bottom = createBottomTabNavigator();
   const Stack = createStackNavigator();
-
-  useEffect(() => {
-    const getToken = async () => {
-      const token = await AsyncStorage.getItem('authToken');
-      setUser(token);
-    };
-    getToken();
-  }, []);
+  const {colors} = useTheme();
+  // useEffect(() => {
+  //   const getToken = async () => {
+  //     const token = await AsyncStorage.getItem('authToken');
+  //     setUser(token);
+  //   };
+  //   getToken();
+  // }, []);
 
   const TabBarIcon = ({focused, name, color, size}) => {
     return focused ? (
       <Icon name={name} color={color} size={size} />
     ) : (
-      <Icon name={`${name}-outline`} color={color} size={size} />
+      <Icon name={`${name}-outline`} color={'#00a2e3'} size={size} />
     );
   };
 
@@ -62,20 +66,17 @@ const App = () => {
       <Bottom.Navigator
         screenOptions={{
           tabBarStyle: {
-            borderRadius: 10,
-            backgroundColor: 'white',
-            width: '95%',
-            alignSelf: 'center',
-            marginBottom: 10,
-            borderTopColor: 'white',
-            height: 60,
+            backgroundColor: colorSchem === 'dark' ? '#001219' : 'white',
+            width: '100%',
+            borderTopColor: colorSchem === 'dark' ? '#00a2e3' : 'grey',
           },
           tabBarIconStyle: {
-            marginTop: 3,
+            // marginTop: 3,
           },
           tabBarLabelStyle: {
-            paddingBottom: 5,
+            paddingBottom: 2,
             fontWeight: '500',
+            color: '#00a2e3',
           },
         }}>
         <Bottom.Screen
@@ -141,13 +142,16 @@ const App = () => {
     );
   }
 
-  const getInitialRoute = () => {
-    if (user) {
+  const getInitialRoute = async () => {
+    const token = await AsyncStorage.getItem('authToken');
+
+    if (token) {
       return 'Main';
     } else {
       return 'Login';
     }
   };
+
   return (
     <UserContextProvider>
       <NavigationContainer

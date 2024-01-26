@@ -8,7 +8,7 @@ import {
   ImageBackground,
   FlatList,
 } from 'react-native';
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 // import {gridData} from '../src/utils/data';
@@ -21,47 +21,32 @@ import axios from 'axios';
 const HomeScreen = ({navigation}) => {
   const [search, setSearch] = useState('');
   const {colors} = useTheme();
-  const {posts, setPosts, loginInfo} = useContext(userContext);
 
+  const {posts, setPosts, loginInfo} = useContext(userContext);
+  const getAllPosts = useCallback(async () => {
+    try {
+      const response = await axios.get('http://10.0.2.2:8080/users/allPosts');
+      setPosts(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
   useEffect(() => {
-    const getAllPosts = async () => {
-      await axios
-        .get('http://10.0.2.2:8080/users/allPosts')
-        .then(function (response) {
-          // console.log(response);
-          setPosts(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    };
+    // const getAllPosts = async () => {
+    //   await axios
+    //     .get('http://10.0.2.2:8080/users/allPosts')
+    //     .then(function (response) {
+    //       // console.log(response);
+    //       setPosts(response.data);
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error);
+    //     });
+    // };
 
     getAllPosts();
-  }, []);
+  }, [getAllPosts]);
   console.log(search);
-  // useEffect(() => {
-  //   if (posts.data) {
-  //     var id = setInterval(() => {
-  //       searchblog();
-  //     }, 2000);
-  //   }
-
-  //   return () => {
-  //     clearInterval(id);
-  //   };
-  // }, []);
-
-  // const searchblog = search => {
-  //   const result = posts.data.filter(item => item.category === search);
-
-  //   return result;
-  // };
-
-  // if (posts.data) {
-  //   const result = searchblog();
-  //   console.log(result);
-  // }
-
   const renderHeader = () => {
     return (
       <View style={styles.container}>
@@ -211,6 +196,7 @@ const HomeScreen = ({navigation}) => {
       )}
       keyExtractor={item => item._id}
       ListHeaderComponent={renderHeader}
+      showsVerticalScrollIndicator={false}
     />
   );
 };

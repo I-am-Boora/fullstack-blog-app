@@ -120,14 +120,18 @@ const PostScreen = () => {
     formData.append('content', content);
     formData.append('category', category);
     formData.append('author', loginInfo?.user?._id);
-    formData.append('photo', {
-      uri: photo.assets[0].uri,
-      type: photo.assets[0].type,
-      name: photo.assets[0].fileName,
-    });
+    if (photo && photo.assets) {
+      formData.append('photo', {
+        uri: photo.assets[0].uri,
+        type: photo.assets[0].type,
+        name: photo.assets[0].fileName,
+      });
+    }
 
+    console.log('outside try block');
     try {
       setShowBanner(true);
+      console.log('inside try block');
       const response = await axios.post(
         'http://10.0.2.2:8080/users/createPost',
         formData,
@@ -135,13 +139,15 @@ const PostScreen = () => {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
+          timeout: 15000,
         },
       );
-
+      console.log('inside try block 2');
       console.log('Image uploaded successfully', response.data);
       setPostData(response.data);
     } catch (error) {
       console.error('Error uploading image', error);
+      setShowBanner(false);
     }
   };
   const renderBanner = () => {

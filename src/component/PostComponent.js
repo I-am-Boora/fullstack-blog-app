@@ -24,7 +24,9 @@ const PostComponent = ({item, navigation}) => {
       <View style={styles.leftContainer}>
         <Image
           source={{
-            uri: item.photo,
+            uri: item?.photo
+              ? item.photo
+              : 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=800',
           }}
           style={styles.image}
         />
@@ -49,7 +51,6 @@ export default PostComponent;
 
 const styles = StyleSheet.create({
   postContainer: {
-    // borderWidth: moderateScale(0.7),
     borderRadius: moderateScale(15),
     flexDirection: 'row',
     marginVertical: verticalScale(3),

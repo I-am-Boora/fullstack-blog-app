@@ -98,6 +98,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //create post
 const createPost = asyncHandler(async (req, res) => {
   const { category, title, content, author } = req.body;
+  console.log(category, title, content, author);
   let postLocalPath;
   if (
     req.files &&

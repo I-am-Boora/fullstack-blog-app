@@ -98,7 +98,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //create post
 const createPost = asyncHandler(async (req, res) => {
   const { category, title, content, author } = req.body;
-  console.log(category, title, content, author);
+  // console.log(category, title, content, author);
   let postLocalPath;
   if (
     req.files &&
@@ -120,7 +120,12 @@ const createPost = asyncHandler(async (req, res) => {
   // const posts = await Post.find()
   return res.status(201).json({ message: "Posted", data: post });
 });
-
+//get login info
+const getLoginInfo = asyncHandler(async (req, res) => {
+  const token = req.params.token;
+  console.log(token);
+  res.json({ token });
+});
 //get all posts
 const allPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find();
@@ -175,7 +180,6 @@ const loginUser = asyncHandler(async (req, res) => {
     // const token = jwt.sign(process.env.ACCESS_TOKEN_SECRET);
     //generate access and refresh token
     const { accessToken } = await generateAccessAndRefereshTokens(user._id);
-    // console.log(token);
     const loggedUser = await User.findById(user._id).select(
       "-password -refreshToken"
     );
@@ -184,6 +188,7 @@ const loginUser = asyncHandler(async (req, res) => {
     //   httpOnly: true,
     //   secure: true,
     // };
+
     return res.status(200).json({
       accessToken,
       user: loggedUser,
@@ -206,16 +211,18 @@ const logoutUser = asyncHandler(async (req, res) => {
       new: true,
     }
   );
-  const options = {
-    httpOnly: true,
-    secure: true,
-  };
+  // const options = {
+  //   httpOnly: true,
+  //   secure: true,
+  // };
 
-  return res
-    .status(200)
-    .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
-    .json({ message: "user logged out !!" });
+  return (
+    res
+      .status(200)
+      // .clearCookie("accessToken", options)
+      // .clearCookie("refreshToken", options)
+      .json({ message: "user logged out !!" })
+  );
 });
 
 //refresh token update
@@ -344,4 +351,5 @@ export {
   allPosts,
   searchPost,
   comment,
+  getLoginInfo,
 };

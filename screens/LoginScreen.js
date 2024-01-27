@@ -39,6 +39,10 @@ const LoginScreen = () => {
 
       if (response.data) {
         const token = response.data.accessToken;
+        const userId = response.data.user._id;
+        const tokenAndUserId = {token, userId};
+        console.log(tokenAndUserId);
+        console.log('new user id found here', userId);
         await AsyncStorage.setItem('authToken', token);
       }
       // setUsername('');

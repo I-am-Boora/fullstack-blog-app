@@ -57,7 +57,7 @@ const PostDetail = () => {
       .post('http://10.0.2.2:8080/users/comment', {content, Post_Id})
       .then(function (response) {
         setComments(response.data.newComment);
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.newComment) {
           const data = getFormatedDate(response.data.newComment.createdAt);
           setCommentTime(data);

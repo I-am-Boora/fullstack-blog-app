@@ -143,13 +143,50 @@ const searchPost = asyncHandler(async (req, res) => {
 
 //comment
 const comment = asyncHandler(async (req, res) => {
-  const { Post_Id, content } = req.body;
-  console.log(Post_Id, content);
-  const newComment = await Comment.create({
-    content: content,
-    postID: Post_Id,
-  });
-  return res.status(200).json({ newComment });
+  const { Post_Id } = req.params;
+  // const { commentContent, author } = req.body;
+  const post = await Post.findById(Post_Id)
+    .populate("comments")
+    .populate("author");
+  // await Comment.find({ postID: Post_Id }).populate("author");
+
+  if (!post) {
+    return res.status(404).json({ error: "Post not found" });
+  }
+  console.log(post.comments[0].author);
+  return res.status(200).json(post);
+});
+
+//createComment
+const createComment = asyncHandler(async (req, res) => {
+  const { author } = req.params;
+  const { commentContent, Post_Id } = req.body;
+
+  // // Fetch comments and populate the 'author' field to get user information
+  // const comments = await Comment.find({ postID: Post_Id })
+  //   .populate("author")
+  //   .populate("replies.user");
+  try {
+    // Create a new comment with the provided content and author
+    const newComment = await Comment.create({
+      commentContent,
+      author,
+      postID: Post_Id,
+    });
+
+    // Populate the 'author' field of the new comment
+    await newComment.populate("author");
+
+    // Return the populated comment to the client
+    res.status(200).json(newComment);
+  } catch (error) {
+    console.error("Error creating comment:", error);
+
+    // Return a more detailed error response
+    res
+      .status(500)
+      .json({ error: "Internal Server Error", message: error.message });
+  }
 });
 //user login functionality
 const loginUser = asyncHandler(async (req, res) => {
@@ -353,4 +390,5 @@ export {
   searchPost,
   comment,
   getLoginInfo,
+  createComment,
 };

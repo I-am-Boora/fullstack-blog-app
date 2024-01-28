@@ -3,6 +3,7 @@ import {
   allPosts,
   changeCurrentPassword,
   comment,
+  createComment,
   createPost,
   getCurrentUser,
   getLoginInfo,
@@ -53,7 +54,8 @@ router.route("/current-user").get(verifyJWT, getCurrentUser);
 router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router.route("/allPosts").get(allPosts);
 router.route("/searchPost").post(searchPost);
-router.route("/comment").post(comment);
+router.route("/posts/:Post_Id").get(comment);
+router.route("/createComments/:author").post(createComment);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
 
 router

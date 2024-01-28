@@ -9,12 +9,14 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useRoute, useTheme} from '@react-navigation/native';
 import axios from 'axios';
 import {getFormatedDate} from '../src/utils/utilityFunction';
+import {userContext} from '../src/utils/UserContextProvider';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PostDetail = () => {
   const [saved, setSaved] = useState(false);
@@ -22,10 +24,12 @@ const PostDetail = () => {
   const [formatDate, setFormatDate] = useState(null);
   const [comments, setComments] = useState([]);
   const [commentTime, setCommentTime] = useState(null);
-  const [content, setContent] = useState('');
+  const [commentContent, setCommentContent] = useState('');
   const [isClickOnReadMore, setIsClickOnReadMore] = useState(false);
   const [isCommentLike, setIsCommentLike] = useState(false);
   const [isPostLike, setIsPostLike] = useState(false);
+  const [comment, setComment] = useState('');
+  const [author, setAuthor] = useState(null);
   const [string, setString] = useState({
     comment:
       'She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.',
@@ -36,6 +40,8 @@ const PostDetail = () => {
   const {height} = Dimensions.get('window');
   useEffect(() => {
     const getPostDetail = async () => {
+      const userId = await AsyncStorage.getItem('userId');
+      setAuthor(userId);
       await axios
         .post('http://10.0.2.2:8080/users/searchPost', {Post_Id})
         .then(function (response) {
@@ -51,23 +57,46 @@ const PostDetail = () => {
     };
     getPostDetail();
   }, []);
-  // console.log(comments);
+
   const handleComment = async () => {
     await axios
-      .post('http://10.0.2.2:8080/users/comment', {content, Post_Id})
+      .post(`http://10.0.2.2:8080/users/${author}/comment`, {
+        commentContent,
+        Post_Id,
+      })
       .then(function (response) {
         setComments(response.data.newComment);
         // console.log(response.data);
         if (response.data.newComment) {
           const data = getFormatedDate(response.data.newComment.createdAt);
           setCommentTime(data);
+          // console.log(comments);
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+  // if (comments) {
+  //   console.log(comments);
+  // }
+  useEffect(() => {
+    const fetchComments = async () => {
+      try {
+        const response = await axios.get(
+          `http://10.0.2.2:8080/users/posts/${Post_Id}`,
+        );
+        setComments(response.data.comments);
+        // console.log(response.data);
+        // setLoading(false);
+      } catch (error) {
+        console.error('Error fetching comments:', error);
+        // setLoading(false);
+      }
+    };
 
+    fetchComments();
+  }, [Post_Id]);
   return (
     <ScrollView
       contentContainerStyle={{
@@ -150,7 +179,7 @@ const PostDetail = () => {
                   fontSize: moderateScale(16),
                   fontWeight: '500',
                 }}>
-                0
+                {postDetail.comments.length}
               </Text>
             </View>
             <View
@@ -209,6 +238,8 @@ const PostDetail = () => {
               </View>
               <TextInput
                 placeholder="write comment"
+                value={commentContent}
+                onChangeText={text => setCommentContent(text)}
                 style={[
                   styles.inputBox,
                   {
@@ -220,89 +251,94 @@ const PostDetail = () => {
                     height: 40,
                   },
                 ]}
-                value={content}
-                onChangeText={text => {
-                  setContent(text);
-                }}
+                // value={content}
+                // onChangeText={text => {
+                //   setContent(text);
+                // }}
               />
-              <Icon name="send-outline" size={24} />
+              <Icon name="send-outline" size={24} onPress={handleComment} />
             </View>
           </View>
-          <View
-            style={[
-              styles.commentDetailContainer,
-              {backgroundColor: colors.secondaryBackground},
-            ]}>
-            <View style={styles.userInfo}>
-              <View style={styles.imageContainer}>
-                <Image
-                  source={{
-                    uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                  }}
-                  style={styles.commentUserImage}
-                />
-              </View>
-              <View style={styles.userProfileContainer}>
-                <Text style={{fontSize: 15, fontWeight: '500'}}>
-                  sonu boora
-                </Text>
-                <Text style={{fontSize: 12}}> 12 Jan 2024</Text>
-              </View>
-            </View>
+          {comments &&
+            comments.map(item => {
+              return (
+                <View
+                  key={item._id}
+                  style={[
+                    styles.commentDetailContainer,
+                    {backgroundColor: colors.secondaryBackground},
+                  ]}>
+                  <View style={styles.userInfo}>
+                    <View style={styles.imageContainer}>
+                      <Image
+                        source={{
+                          uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                        }}
+                        style={styles.commentUserImage}
+                      />
+                    </View>
+                    <View style={styles.userProfileContainer}>
+                      <Text style={{fontSize: 15, fontWeight: '500'}}>
+                        sonu boora
+                      </Text>
+                      <Text style={{fontSize: 12}}> 12 Jan 2024</Text>
+                    </View>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      lineHeight: 20,
+                      paddingHorizontal: scale(5),
+                      color: colors.text,
+                    }}>
+                    {isClickOnReadMore
+                      ? item?.commentContent?.commentContent
+                      : item?.commentContent.slice(0, 200)}
+                    {string.comment.length > 200 && (
+                      <Text
+                        onPress={() => {
+                          setIsClickOnReadMore(!isClickOnReadMore);
+                        }}
+                        style={{fontWeight: '500'}}>
+                        {isClickOnReadMore ? ' Read less' : '...Read more'}
+                      </Text>
+                    )}
+                  </Text>
 
-            <Text
-              style={{
-                fontSize: 14,
-                lineHeight: 20,
-                paddingHorizontal: scale(5),
-                color: colors.text,
-              }}>
-              {isClickOnReadMore
-                ? string.comment
-                : string.comment.slice(0, 200)}
+                  <View style={styles.replyCommentSection}>
+                    {isCommentLike ? (
+                      <Icon
+                        name="heart"
+                        size={24}
+                        color={'red'}
+                        onPress={() => {
+                          setIsCommentLike(!isCommentLike);
+                        }}
+                      />
+                    ) : (
+                      <Icon
+                        name="heart-outline"
+                        size={24}
+                        color={'red'}
+                        onPress={() => {
+                          setIsCommentLike(!isCommentLike);
+                        }}
+                      />
+                    )}
 
-              <Text
-                onPress={() => {
-                  setIsClickOnReadMore(!isClickOnReadMore);
-                }}
-                style={{fontWeight: '500'}}>
-                {string.comment.length > 200 &&
-                  (isClickOnReadMore ? ' Read less' : '...Read more')}
-              </Text>
-            </Text>
-
-            <View style={styles.replyCommentSection}>
-              {isCommentLike ? (
-                <Icon
-                  name="heart"
-                  size={24}
-                  color={'red'}
-                  onPress={() => {
-                    setIsCommentLike(!isCommentLike);
-                  }}
-                />
-              ) : (
-                <Icon
-                  name="heart-outline"
-                  size={24}
-                  color={'red'}
-                  onPress={() => {
-                    setIsCommentLike(!isCommentLike);
-                  }}
-                />
-              )}
-
-              <Icon name="chatbubble-ellipses-outline" size={24} />
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: '500',
-                  color: '#00b4fc',
-                }}>
-                Reply 0
-              </Text>
-            </View>
-          </View>
+                    <Icon name="chatbubble-ellipses-outline" size={24} />
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: '500',
+                        color: '#00b4fc',
+                      }}>
+                      Reply 0
+                    </Text>
+                  </View>
+                </View>
+              );
+            })}
         </>
       ) : (
         <View

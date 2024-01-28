@@ -11,12 +11,13 @@ const UserContextProvider = ({children}) => {
     const checkLoginStatus = async () => {
       const token = await AsyncStorage.getItem('authToken');
       if (token) {
+        const userId = await AsyncStorage.getItem('userId');
         // Fetch user data based on the token and setLoginInfo
-        const user = await axios.get(
-          `http:10.0.2.2:8080/users/getUserInfo/${token}`,
+        const response = await axios.get(
+          `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
         );
-        // setLoginInfo(user);
-        console.log(user);
+        setLoginInfo(response.data);
+        // console.log(user);
       }
     };
 

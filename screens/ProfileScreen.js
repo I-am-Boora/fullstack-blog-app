@@ -11,6 +11,7 @@ const ProfileScreen = () => {
   const navigation = useNavigation();
   const handleLogout = async () => {
     await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.removeItem('userId');
     navigation.navigate('Login');
   };
   console.log(loginInfo);

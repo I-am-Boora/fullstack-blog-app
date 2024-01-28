@@ -122,9 +122,10 @@ const createPost = asyncHandler(async (req, res) => {
 });
 //get login info
 const getLoginInfo = asyncHandler(async (req, res) => {
-  const token = req.params.token;
-  console.log(token);
-  res.json({ token });
+  const userId = req.params.userId;
+  const user = await User.findById(userId).select("-password");
+  console.log(user);
+  return res.status(200).json({ user });
 });
 //get all posts
 const allPosts = asyncHandler(async (req, res) => {

@@ -54,7 +54,7 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router.route("/allPosts").get(allPosts);
 router.route("/searchPost").post(searchPost);
 router.route("/comment").post(comment);
-router.route("/getUserInfo/:token").get(getLoginInfo);
+router.route("/getUserInfo/:userId").get(getLoginInfo);
 
 router
   .route("/avatar")

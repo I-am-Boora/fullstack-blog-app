@@ -16,7 +16,11 @@ const UserContextProvider = ({children}) => {
         const response = await axios.get(
           `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
         );
-        setLoginInfo(response.data);
+        console.log(response.data);
+        if (response.data) {
+          setLoginInfo(response.data);
+        }
+
         // console.log(user);
       }
     };

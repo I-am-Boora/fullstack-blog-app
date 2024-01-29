@@ -30,6 +30,7 @@ const PostDetail = () => {
   const [isPostLike, setIsPostLike] = useState(false);
   const [comment, setComment] = useState('');
   const [author, setAuthor] = useState(null);
+  const [commentCount, setCommentCount] = useState(0);
   const [string, setString] = useState({
     comment:
       'She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.',
@@ -38,35 +39,22 @@ const PostDetail = () => {
   const route = useRoute();
   const {Post_Id} = route.params;
   const {height} = Dimensions.get('window');
-  useEffect(() => {
-    const getPostDetail = async () => {
-      const userId = await AsyncStorage.getItem('userId');
-      setAuthor(userId);
-      await axios
-        .post('http://10.0.2.2:8080/users/searchPost', {Post_Id})
-        .then(function (response) {
-          setPostDetail(response.data.post);
-          if (response.data.post) {
-            const data = getFormatedDate(response.data.post.createdAt);
-            setFormatDate(data);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-    };
-    getPostDetail();
-  }, []);
 
   const handleComment = async () => {
+    if (!author) {
+      const userId = await AsyncStorage.getItem('userId');
+      setAuthor(userId);
+    }
     await axios
-      .post(`http://10.0.2.2:8080/users/${author}/comment`, {
+      .post(`http://10.0.2.2:8080/users/createComments`, {
+        author,
         commentContent,
         Post_Id,
       })
       .then(function (response) {
         setComments(response.data.newComment);
-        // console.log(response.data);
+        setCommentCount(prev => prev + 1);
+        console.log(response.data);
         if (response.data.newComment) {
           const data = getFormatedDate(response.data.newComment.createdAt);
           setCommentTime(data);
@@ -80,23 +68,52 @@ const PostDetail = () => {
   // if (comments) {
   //   console.log(comments);
   // }
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await axios.get(
-          `http://10.0.2.2:8080/users/posts/${Post_Id}`,
-        );
-        setComments(response.data.comments);
-        // console.log(response.data);
-        // setLoading(false);
-      } catch (error) {
-        console.error('Error fetching comments:', error);
-        // setLoading(false);
-      }
-    };
+  const fetchPostDetail = useCallback(async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      setAuthor(userId);
+      const response = await axios.get(
+        `http://10.0.2.2:8080/users/posts/${Post_Id}`,
+      );
+      setPostDetail(response.data);
+      console.log(response.data);
+      setCommentCount(response.data.comments.length);
 
-    fetchComments();
-  }, [Post_Id]);
+      if (response.data) {
+        const data = getFormatedDate(response.data.createdAt);
+        setFormatDate(data);
+      }
+      // console.log(response.data);
+      // setLoading(false);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      // setLoading(false);
+    }
+  }, [Post_Id, postDetail]);
+
+  useEffect(() => {
+    // const fetchPostDetail = async () => {
+    //   try {
+    //     const response = await axios.get(
+    //       `http://10.0.2.2:8080/users/posts/${Post_Id}`,
+    //     );
+    //     setPostDetail(response.data);
+    //     if (response.data) {
+    //       const data = getFormatedDate(response.data.createdAt);
+    //       setFormatDate(data);
+    //     }
+    //     // console.log(response.data);
+    //     // setLoading(false);
+    //   } catch (error) {
+    //     console.error('Error fetching comments:', error);
+    //     // setLoading(false);
+    //   }
+    // };
+
+    fetchPostDetail();
+
+    // fetchPostDetail();
+  }, [commentCount]);
   return (
     <ScrollView
       contentContainerStyle={{
@@ -259,8 +276,9 @@ const PostDetail = () => {
               <Icon name="send-outline" size={24} onPress={handleComment} />
             </View>
           </View>
-          {comments &&
-            comments.map(item => {
+
+          {postDetail.comments &&
+            postDetail.comments.map(item => {
               return (
                 <View
                   key={item._id}

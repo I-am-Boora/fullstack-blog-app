@@ -145,28 +145,28 @@ const searchPost = asyncHandler(async (req, res) => {
 const comment = asyncHandler(async (req, res) => {
   const { Post_Id } = req.params;
   // const { commentContent, author } = req.body;
-  const post = await Post.findById(Post_Id)
-    .populate("comments")
-    .populate("author");
+  const post = await Post.findById(Post_Id).populate("comments");
   // await Comment.find({ postID: Post_Id }).populate("author");
-
+  console.log(post);
   if (!post) {
     return res.status(404).json({ error: "Post not found" });
   }
-  console.log(post.comments[0].author);
+  // console.log(post.comments[0].author);
   return res.status(200).json(post);
 });
 
 //createComment
 const createComment = asyncHandler(async (req, res) => {
-  const { author } = req.params;
-  const { commentContent, Post_Id } = req.body;
-
-  // // Fetch comments and populate the 'author' field to get user information
-  // const comments = await Comment.find({ postID: Post_Id })
-  //   .populate("author")
-  //   .populate("replies.user");
   try {
+    const { commentContent, Post_Id, author } = req.body;
+    const post = await Post.findById(Post_Id);
+    if (!post) {
+      return res.status(404).json({ error: "Post not found" });
+    }
+
+    if (!(commentContent && Post_Id && author)) {
+      return res.status(400).json({ message: "Not getting all values" });
+    }
     // Create a new comment with the provided content and author
     const newComment = await Comment.create({
       commentContent,
@@ -174,18 +174,12 @@ const createComment = asyncHandler(async (req, res) => {
       postID: Post_Id,
     });
 
-    // Populate the 'author' field of the new comment
-    await newComment.populate("author");
+    post.comments.push(newComment);
+    await post.save();
 
-    // Return the populated comment to the client
     res.status(200).json(newComment);
   } catch (error) {
     console.error("Error creating comment:", error);
-
-    // Return a more detailed error response
-    res
-      .status(500)
-      .json({ error: "Internal Server Error", message: error.message });
   }
 });
 //user login functionality

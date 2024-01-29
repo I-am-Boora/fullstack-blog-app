@@ -55,7 +55,7 @@ router.route("/update-account").patch(verifyJWT, updateAccountDetails);
 router.route("/allPosts").get(allPosts);
 router.route("/searchPost").post(searchPost);
 router.route("/posts/:Post_Id").get(comment);
-router.route("/createComments/:author").post(createComment);
+router.route("/createComments").post(createComment);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
 
 router

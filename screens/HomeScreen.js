@@ -32,18 +32,6 @@ const HomeScreen = ({navigation}) => {
     }
   }, []);
   useEffect(() => {
-    // const getAllPosts = async () => {
-    //   await axios
-    //     .get('http://10.0.2.2:8080/users/allPosts')
-    //     .then(function (response) {
-    //       // console.log(response);
-    //       setPosts(response.data);
-    //     })
-    //     .catch(function (error) {
-    //       console.log(error);
-    //     });
-    // };
-
     getAllPosts();
   }, [getAllPosts]);
   console.log(search);

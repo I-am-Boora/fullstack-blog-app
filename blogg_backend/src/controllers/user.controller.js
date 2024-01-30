@@ -141,13 +141,35 @@ const searchPost = asyncHandler(async (req, res) => {
   res.status(200).json({ post });
 });
 
+//like post
+const likePost = asyncHandler(async (req, res) => {
+  const { post_id } = req.params;
+  const { author } = req.params;
+
+  await Post.findByIdAndUpdate(post_id, {
+    $push: { likes: author },
+  });
+
+  res.status(200).json({ message: "post liked" });
+});
+//unlink post
+const unLikePost = asyncHandler(async (req, res) => {
+  const { post_id } = req.params;
+  const { author } = req.params;
+  console.log(author);
+  const post = await Post.findByIdAndUpdate(post_id, {
+    $pull: { likes: author },
+  });
+  console.log(post);
+  res.status(200).json({ message: "post liked" });
+});
 //comment
 const comment = asyncHandler(async (req, res) => {
   const { Post_Id } = req.params;
   // const { commentContent, author } = req.body;
   const post = await Post.findById(Post_Id).populate("comments");
   // await Comment.find({ postID: Post_Id }).populate("author");
-  console.log(post);
+  // console.log(post);
   if (!post) {
     return res.status(404).json({ error: "Post not found" });
   }
@@ -385,4 +407,6 @@ export {
   comment,
   getLoginInfo,
   createComment,
+  likePost,
+  unLikePost,
 };

@@ -7,10 +7,12 @@ import {
   createPost,
   getCurrentUser,
   getLoginInfo,
+  likePost,
   loginUser,
   refreshAccessToken,
   registerUser,
   searchPost,
+  unLikePost,
   updateAccountDetails,
   updateUserAvatar,
 } from "../controllers/user.controller.js";
@@ -56,6 +58,8 @@ router.route("/allPosts").get(allPosts);
 router.route("/searchPost").post(searchPost);
 router.route("/posts/:Post_Id").get(comment);
 router.route("/createComments").post(createComment);
+router.route("/postLike/:post_id/:author").post(likePost);
+router.route("/postUnlike/:post_id/:author").post(unLikePost);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
 
 router

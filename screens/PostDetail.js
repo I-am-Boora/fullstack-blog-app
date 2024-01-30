@@ -28,13 +28,10 @@ const PostDetail = () => {
   const [isClickOnReadMore, setIsClickOnReadMore] = useState(false);
   const [isCommentLike, setIsCommentLike] = useState(false);
   const [isPostLike, setIsPostLike] = useState(false);
-  const [comment, setComment] = useState('');
   const [author, setAuthor] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
-  const [string, setString] = useState({
-    comment:
-      'She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.She turned and nearly fell over the bonnet of his car, which was crawling quietly along the street.',
-  });
+  const [likeCount, setLikeCount] = useState(0);
+
   const {colors} = useTheme();
   const route = useRoute();
   const {Post_Id} = route.params;
@@ -54,7 +51,7 @@ const PostDetail = () => {
       .then(function (response) {
         setComments(response.data.newComment);
         setCommentCount(prev => prev + 1);
-        console.log(response.data);
+        // console.log(response.data);
         if (response.data.newComment) {
           const data = getFormatedDate(response.data.newComment.createdAt);
           setCommentTime(data);
@@ -65,9 +62,6 @@ const PostDetail = () => {
         console.log(error);
       });
   };
-  // if (comments) {
-  //   console.log(comments);
-  // }
   const fetchPostDetail = useCallback(async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -76,9 +70,9 @@ const PostDetail = () => {
         `http://10.0.2.2:8080/users/posts/${Post_Id}`,
       );
       setPostDetail(response.data);
-      console.log(response.data);
+      // console.log(response.data.comments);
       setCommentCount(response.data.comments.length);
-
+      setLikeCount(response.data.likes.length);
       if (response.data) {
         const data = getFormatedDate(response.data.createdAt);
         setFormatDate(data);
@@ -92,28 +86,33 @@ const PostDetail = () => {
   }, [Post_Id, postDetail]);
 
   useEffect(() => {
-    // const fetchPostDetail = async () => {
-    //   try {
-    //     const response = await axios.get(
-    //       `http://10.0.2.2:8080/users/posts/${Post_Id}`,
-    //     );
-    //     setPostDetail(response.data);
-    //     if (response.data) {
-    //       const data = getFormatedDate(response.data.createdAt);
-    //       setFormatDate(data);
-    //     }
-    //     // console.log(response.data);
-    //     // setLoading(false);
-    //   } catch (error) {
-    //     console.error('Error fetching comments:', error);
-    //     // setLoading(false);
-    //   }
-    // };
-
     fetchPostDetail();
+  }, [commentCount, likeCount]);
 
-    // fetchPostDetail();
-  }, [commentCount]);
+  const handlePostUnlike = async () => {
+    await axios
+      .post(`http://10.0.2.2:8080/users/postUnlike/${Post_Id}/${author}`)
+      .then(response => {
+        console.log(response.data);
+        setIsPostLike(!isPostLike);
+        setLikeCount(prev => prev - 1);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+  const handlePostLike = async () => {
+    await axios
+      .post(`http://10.0.2.2:8080/users/postLike/${Post_Id}/${author}`)
+      .then(response => {
+        console.log(response.data);
+        setIsPostLike(!isPostLike);
+        setLikeCount(prev => prev + 1);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   return (
     <ScrollView
       contentContainerStyle={{
@@ -211,14 +210,14 @@ const PostDetail = () => {
                   name="heart"
                   size={22}
                   color={'red'}
-                  onPress={() => setIsPostLike(!isPostLike)}
+                  onPress={handlePostUnlike}
                 />
               ) : (
                 <Icon
                   name="heart-outline"
                   size={22}
                   color={'red'}
-                  onPress={() => setIsPostLike(!isPostLike)}
+                  onPress={handlePostLike}
                 />
               )}
 
@@ -227,7 +226,7 @@ const PostDetail = () => {
                   fontSize: moderateScale(16),
                   fontWeight: '500',
                 }}>
-                12
+                {postDetail.likes.length}
               </Text>
             </View>
           </View>
@@ -312,7 +311,7 @@ const PostDetail = () => {
                     {isClickOnReadMore
                       ? item?.commentContent?.commentContent
                       : item?.commentContent.slice(0, 200)}
-                    {string.comment.length > 200 && (
+                    {item?.comments?.length > 200 && (
                       <Text
                         onPress={() => {
                           setIsClickOnReadMore(!isClickOnReadMore);

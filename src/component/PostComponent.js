@@ -3,17 +3,17 @@ import React from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
 
-const PostComponent = ({item, navigation}) => {
+const PostComponent = ({item, navigation, calculateTimeAgo}) => {
   const {colors} = useTheme();
   // const onPressHandle = title => {
   // };
-  const sendPostDetail = async Post_Id => {
-    navigation.navigate('PostDetail', {Post_Id});
+  const sendPostDetail = async (Post_Id, userInfo) => {
+    navigation.navigate('PostDetail', {Post_Id, userInfo});
   };
 
   return (
     <Pressable
-      onPress={() => sendPostDetail(item._id)}
+      onPress={() => sendPostDetail(item._id, item.author)}
       style={[
         styles.postContainer,
         {
@@ -22,14 +22,30 @@ const PostComponent = ({item, navigation}) => {
         },
       ]}>
       <View style={styles.leftContainer}>
-        <Image
-          source={{
-            uri: item?.photo
-              ? item.photo
-              : 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=800',
-          }}
-          style={styles.image}
-        />
+        {item?.photo ? (
+          <Image
+            source={{
+              uri: item?.photo,
+            }}
+            style={styles.image}
+          />
+        ) : (
+          <View
+            style={{
+              width: 70,
+              height: 70,
+              // borderWidth: 0.7,
+              borderRadius: 8,
+              justifyContent: 'center',
+              alignItems: 'center',
+              backgroundColor: '#ccf0fe',
+              // borderColor: 'black',
+            }}>
+            <Text style={{fontSize: moderateScale(40), color: '#007eb0'}}>
+              I
+            </Text>
+          </View>
+        )}
       </View>
       <View style={styles.rightContainer}>
         <Text style={styles.authorTitle}>{item.category}</Text>
@@ -39,8 +55,34 @@ const PostComponent = ({item, navigation}) => {
           {item.title}
         </Text>
         <View style={styles.authorSection}>
-          <Text style={styles.authorTitle}>sonu boora ・ </Text>
-          <Text style={styles.authorTitle}>{item.updatedAt}</Text>
+          {item?.author?.avatar ? (
+            <Image
+              source={{
+                uri: item?.author?.avatar,
+              }}
+              style={{
+                width: scale(20),
+                height: verticalScale(20),
+                borderRadius: moderateScale(20),
+                resizeMode: 'cover',
+              }}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/blank-profile.png')}
+              style={{
+                width: scale(20),
+                height: verticalScale(20),
+                borderRadius: moderateScale(20),
+                resizeMode: 'cover',
+              }}
+            />
+          )}
+
+          <Text style={styles.authorTitle}>{item?.author?.fullName} ・ </Text>
+          <Text style={styles.authorTitle}>
+            {calculateTimeAgo(item?.createdAt)}
+          </Text>
         </View>
       </View>
     </Pressable>

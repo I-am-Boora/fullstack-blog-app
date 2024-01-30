@@ -129,9 +129,26 @@ const getLoginInfo = asyncHandler(async (req, res) => {
 });
 //get all posts
 const allPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find();
-  // console.log(posts);
-  return res.json({ message: "all posts", data: posts });
+  try {
+    // Fetch all posts with user information
+    const posts = await Post.find()
+      .populate({
+        path: "author",
+        model: User,
+        select: "fullName avatar", // Select the fields you want to include
+      })
+      .populate({
+        path: "likes",
+        model: User,
+        select: "fullName avatar",
+      })
+      .exec();
+    console.log(posts);
+    res.status(200).json({ data: posts });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 
 //search post and send it to post detail screen

@@ -17,6 +17,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import PostComponent from '../src/component/PostComponent';
 import {userContext} from '../src/utils/UserContextProvider';
 import axios from 'axios';
+import {calculateTimeAgo} from '../src/utils/utilityFunction';
 
 const HomeScreen = ({navigation}) => {
   const [search, setSearch] = useState('');
@@ -27,6 +28,7 @@ const HomeScreen = ({navigation}) => {
     try {
       const response = await axios.get('http://10.0.2.2:8080/users/allPosts');
       setPosts(response.data);
+      // console.log(response.data);
     } catch (error) {
       console.log(error);
     }
@@ -34,7 +36,7 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     getAllPosts();
   }, [getAllPosts]);
-  console.log(search);
+  // console.log(search);
   const renderHeader = () => {
     return (
       <View style={styles.container}>
@@ -109,6 +111,7 @@ const HomeScreen = ({navigation}) => {
     );
   };
 
+  // console.log(calculateTimeAgo());
   return (
     // <ScrollView style={styles.container}>
     //   <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
@@ -180,7 +183,11 @@ const HomeScreen = ({navigation}) => {
     <FlatList
       data={posts.data}
       renderItem={({item, index}) => (
-        <PostComponent item={item} navigation={navigation} />
+        <PostComponent
+          item={item}
+          navigation={navigation}
+          calculateTimeAgo={calculateTimeAgo}
+        />
       )}
       keyExtractor={item => item._id}
       ListHeaderComponent={renderHeader}

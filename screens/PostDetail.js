@@ -14,7 +14,7 @@ import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useRoute, useTheme} from '@react-navigation/native';
 import axios from 'axios';
-import {getFormatedDate} from '../src/utils/utilityFunction';
+import {calculateTimeAgo, getFormatedDate} from '../src/utils/utilityFunction';
 import {userContext} from '../src/utils/UserContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -34,7 +34,7 @@ const PostDetail = () => {
 
   const {colors} = useTheme();
   const route = useRoute();
-  const {Post_Id} = route.params;
+  const {Post_Id, userInfo} = route.params;
   const {height} = Dimensions.get('window');
 
   const handleComment = async () => {
@@ -113,6 +113,12 @@ const PostDetail = () => {
         console.log(error);
       });
   };
+
+  // const currentTime = new Date().getTime();
+  // const postTime = new Date(postDetail.createdAt).getTime();
+
+  // const timeDifference = currentTime - postTime;
+  // console.log(timeDifference);
   return (
     <ScrollView
       contentContainerStyle={{
@@ -129,12 +135,20 @@ const PostDetail = () => {
                 columnGap: 10,
                 alignItems: 'center',
               }}>
-              <Image
-                source={{
-                  uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                }}
-                style={styles.image}
-              />
+              {userInfo?.avatar ? (
+                <Image
+                  source={{
+                    uri: userInfo?.avatar,
+                  }}
+                  style={styles.image}
+                />
+              ) : (
+                <Image
+                  source={require('../src/assets/images/blank-profile.png')}
+                  style={styles.image}
+                />
+              )}
+
               <View style={styles.userDetail}>
                 <Text
                   style={{
@@ -142,12 +156,12 @@ const PostDetail = () => {
                     fontSize: 16,
                     color: colors.text,
                   }}>
-                  sonu boora
+                  {userInfo ? userInfo?.fullName : 'unknown'}
                 </Text>
                 <View style={{flexDirection: 'row', columnGap: 5}}>
-                  <Text style={{fontSize: 13}}>{formatDate.date}</Text>
-                  <Text style={{fontSize: 13}}>{formatDate.month}</Text>
-                  <Text style={{fontSize: 13}}>{formatDate.year}</Text>
+                  <Text style={{fontSize: 13}}>
+                    {calculateTimeAgo(postDetail.createdAt)}
+                  </Text>
                 </View>
               </View>
               <Text style={{fontSize: 16, color: 'green'}}>follow</Text>

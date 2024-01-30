@@ -32,6 +32,24 @@ const userSchema = new Schema(
         ref: "Post",
       },
     ],
+    posts: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Post",
+      },
+    ],
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    followings: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
     avatar: {
       type: String, //cloudary url
     },

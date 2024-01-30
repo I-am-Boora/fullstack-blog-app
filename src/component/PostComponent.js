@@ -38,10 +38,14 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
               borderRadius: 8,
               justifyContent: 'center',
               alignItems: 'center',
-              backgroundColor: '#ccf0fe',
+              backgroundColor: colors.imageIconColor,
               // borderColor: 'black',
             }}>
-            <Text style={{fontSize: moderateScale(40), color: '#007eb0'}}>
+            <Text
+              style={{
+                fontSize: moderateScale(40),
+                color: colors.imageIconText,
+              }}>
               I
             </Text>
           </View>
@@ -71,9 +75,9 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
             <Image
               source={require('../assets/images/blank-profile.png')}
               style={{
-                width: scale(20),
-                height: verticalScale(20),
-                borderRadius: moderateScale(20),
+                width: scale(18),
+                height: verticalScale(18),
+                borderRadius: moderateScale(18),
                 resizeMode: 'cover',
               }}
             />
@@ -118,9 +122,13 @@ const styles = StyleSheet.create({
   },
   authorSection: {
     flexDirection: 'row',
-    paddingBottom: verticalScale(3),
+    // paddingBottom: verticalScale(3),
+    marginVertical: verticalScale(3),
+    alignItems: 'center',
   },
   authorTitle: {
     fontFamily: 'Poppins-Regular',
+    paddingLeft: scale(3),
+    fontSize: moderateScale(12),
   },
 });

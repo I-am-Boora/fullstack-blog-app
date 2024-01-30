@@ -32,12 +32,14 @@ const ProfileScreen = () => {
         onPress={handleLogout}
         style={{
           backgroundColor: colors.secondaryBackground,
-          height: 40,
+          // height: 40,
           width: '100%',
           justifyContent: 'center',
           alignItems: 'center',
+          padding: moderateScale(5),
           borderRadius: moderateScale(15),
           marginTop: verticalScale(10),
+          elevation: 4,
         }}>
         <Text style={[styles.profileName, {color: colors.text}]}>Logout</Text>
       </Pressable>

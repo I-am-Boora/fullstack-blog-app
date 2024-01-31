@@ -128,10 +128,8 @@ const PostScreen = () => {
       });
     }
 
-    console.log('outside try block');
     try {
       setShowBanner(true);
-      console.log('inside try block');
       const response = await axios.post(
         'http://10.0.2.2:8080/users/createPost',
         formData,
@@ -142,7 +140,7 @@ const PostScreen = () => {
           timeout: 15000,
         },
       );
-      console.log('inside try block 2');
+
       console.log('Image uploaded successfully', response.data);
       setPostData(response.data);
     } catch (error) {

@@ -14,6 +14,7 @@ import {
   searchPost,
   unLikePost,
   updateAccountDetails,
+  updateProfilePhoto,
   updateUserAvatar,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
@@ -61,6 +62,9 @@ router.route("/createComments").post(createComment);
 router.route("/postLike/:post_id/:author").post(likePost);
 router.route("/postUnlike/:post_id/:author").post(unLikePost);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
+router
+  .route("/updateProfilePhoto/:userId")
+  .post(upload.single("avatar"), updateProfilePhoto);
 
 router
   .route("/avatar")

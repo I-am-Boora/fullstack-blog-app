@@ -53,10 +53,10 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
       </View>
       <View style={styles.rightContainer}>
         <Text style={styles.authorTitle}>{item.category}</Text>
-        <Text
-          style={[styles.postTitle, {color: colors.text}]}
-          numberOfLines={2}>
-          {item.title}
+        <Text style={[styles.postTitle, {color: colors.text}]}>
+          {item.title.length > 62
+            ? `${item.title.slice(0, 62)}...`
+            : item.title}
         </Text>
         <View style={styles.authorSection}>
           {item?.author?.avatar ? (

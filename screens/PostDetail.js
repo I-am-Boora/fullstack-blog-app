@@ -65,6 +65,7 @@ const PostDetail = () => {
   const fetchPostDetail = useCallback(async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
+
       setAuthor(userId);
       const response = await axios.get(
         `http://10.0.2.2:8080/users/posts/${Post_Id}`,

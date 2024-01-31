@@ -98,7 +98,7 @@ const registerUser = asyncHandler(async (req, res) => {
 //create post
 const createPost = asyncHandler(async (req, res) => {
   const { category, title, content, author } = req.body;
-  // console.log(category, title, content, author);
+
   let postLocalPath;
   if (
     req.files &&
@@ -116,7 +116,7 @@ const createPost = asyncHandler(async (req, res) => {
     content,
     author,
   });
-  console.log(post);
+
   // const posts = await Post.find()
   return res.status(201).json({ message: "Posted", data: post });
 });
@@ -124,7 +124,7 @@ const createPost = asyncHandler(async (req, res) => {
 const getLoginInfo = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
   const user = await User.findById(userId).select("-password");
-  console.log(user);
+  // console.log(user);
   return res.status(200).json({ user });
 });
 //get all posts
@@ -149,6 +149,30 @@ const allPosts = asyncHandler(async (req, res) => {
     console.error("Error fetching posts:", error);
     res.status(500).json({ error: "Internal Server Error" });
   }
+});
+//update profile photo
+const updateProfilePhoto = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  let profilePhoto;
+  if (
+    req.files &&
+    Array.isArray(req.files?.photo) &&
+    req.files?.photo?.length > 0
+  ) {
+    profilePhoto = req.files?.photo[0]?.path;
+  }
+  console.log(profilePhoto);
+  const photo = await uploadOnCloudinary(profilePhoto);
+  console.log(photo);
+  const user = await User.findByIdAndUpdate(
+    userId,
+    {
+      $set: { avatar: photo.url },
+    },
+    { new: true }
+  ).select("-password -refreshToken");
+  console.log(user);
+  // res.status(200).json(user);
 });
 
 //search post and send it to post detail screen
@@ -426,4 +450,5 @@ export {
   createComment,
   likePost,
   unLikePost,
+  updateProfilePhoto,
 };

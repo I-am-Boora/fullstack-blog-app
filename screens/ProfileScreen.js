@@ -79,23 +79,24 @@ const ProfileScreen = () => {
         type: avatar.assets[0].type,
         name: avatar.assets[0].fileName,
       });
-      console.log(avatar);
-      try {
-        const response = await axios.post(
-          `http://10.0.2.2:8080/users/updateProfilePhoto/${userId}`,
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-            timeout: 15000,
-          },
-        );
 
-        console.log('Image uploaded successfully', response.data);
-        setProfilePhoto(response.data);
+      try {
+        await axios
+          .post(
+            `http://10.0.2.2:8080/users/updateProfilePhoto/${userId}`,
+            formData,
+            {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            },
+          )
+          .then(response => {
+            console.log('Image uploaded successfully', response.data);
+            setProfilePhoto(response.data);
+          });
       } catch (error) {
-        console.error('Error uploading image', error);
+        console.error('Error uploading image', error.response.data);
         // setShowBanner(false);
       }
     }

@@ -17,6 +17,7 @@ import axios from 'axios';
 import {calculateTimeAgo, getFormatedDate} from '../src/utils/utilityFunction';
 import {userContext} from '../src/utils/UserContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import CommentSection from '../src/component/CommentSection';
 
 const PostDetail = () => {
   const [saved, setSaved] = useState(false);
@@ -31,6 +32,7 @@ const PostDetail = () => {
   const [author, setAuthor] = useState(null);
   const [commentCount, setCommentCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
+  const [likeIndex, setLikeIndex] = useState(null);
 
   const {colors} = useTheme();
   const route = useRoute();
@@ -292,83 +294,9 @@ const PostDetail = () => {
           </View>
 
           {postDetail.comments &&
-            postDetail.comments.map(item => {
+            postDetail.comments.map((item, index) => {
               return (
-                <View
-                  key={item._id}
-                  style={[
-                    styles.commentDetailContainer,
-                    {backgroundColor: colors.secondaryBackground},
-                  ]}>
-                  <View style={styles.userInfo}>
-                    <View style={styles.imageContainer}>
-                      <Image
-                        source={{
-                          uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                        }}
-                        style={styles.commentUserImage}
-                      />
-                    </View>
-                    <View style={styles.userProfileContainer}>
-                      <Text style={{fontSize: 15, fontWeight: '500'}}>
-                        sonu boora
-                      </Text>
-                      <Text style={{fontSize: 12}}> 12 Jan 2024</Text>
-                    </View>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      lineHeight: 20,
-                      paddingHorizontal: scale(5),
-                      color: colors.text,
-                    }}>
-                    {isClickOnReadMore
-                      ? item?.commentContent?.commentContent
-                      : item?.commentContent.slice(0, 200)}
-                    {item?.comments?.length > 200 && (
-                      <Text
-                        onPress={() => {
-                          setIsClickOnReadMore(!isClickOnReadMore);
-                        }}
-                        style={{fontWeight: '500'}}>
-                        {isClickOnReadMore ? ' Read less' : '...Read more'}
-                      </Text>
-                    )}
-                  </Text>
-
-                  <View style={styles.replyCommentSection}>
-                    {isCommentLike ? (
-                      <Icon
-                        name="heart"
-                        size={24}
-                        color={'red'}
-                        onPress={() => {
-                          setIsCommentLike(!isCommentLike);
-                        }}
-                      />
-                    ) : (
-                      <Icon
-                        name="heart-outline"
-                        size={24}
-                        color={'red'}
-                        onPress={() => {
-                          setIsCommentLike(!isCommentLike);
-                        }}
-                      />
-                    )}
-
-                    <Icon name="chatbubble-ellipses-outline" size={24} />
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        fontWeight: '500',
-                        color: '#00b4fc',
-                      }}>
-                      Reply 0
-                    </Text>
-                  </View>
-                </View>
+                <CommentSection item={item} key={item._id} index={index} />
               );
             })}
         </>
@@ -433,27 +361,11 @@ const styles = StyleSheet.create({
     columnGap: 10,
     alignItems: 'center',
   },
-  commentDetailContainer: {
-    rowGap: 5,
-    borderRadius: moderateScale(15),
-  },
-  userInfo: {
-    flexDirection: 'row',
-    // alignItems: 'center',
-    columnGap: 10,
-    marginTop: verticalScale(5),
-    marginLeft: scale(5),
-  },
+
   commentUserImage: {
     width: scale(30),
     height: verticalScale(30),
     borderRadius: moderateScale(30),
     resizeMode: 'cover',
-  },
-  replyCommentSection: {
-    flexDirection: 'row',
-    marginLeft: scale(10),
-    columnGap: 10,
-    marginBottom: verticalScale(5),
   },
 });

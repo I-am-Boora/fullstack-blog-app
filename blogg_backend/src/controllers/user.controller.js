@@ -125,6 +125,7 @@ const getLoginInfo = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
   const user = await User.findById(userId).select("-password");
   // console.log(user);
+
   return res.status(200).json({ user });
 });
 //get all posts
@@ -143,7 +144,7 @@ const allPosts = asyncHandler(async (req, res) => {
         select: "fullName avatar",
       })
       .exec();
-    console.log(posts);
+
     res.status(200).json({ data: posts });
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -153,6 +154,7 @@ const allPosts = asyncHandler(async (req, res) => {
 //update profile photo
 const updateProfilePhoto = asyncHandler(async (req, res) => {
   const { userId } = req.params;
+  console.log(userId);
   let profilePhoto;
   if (
     req.files &&
@@ -161,17 +163,30 @@ const updateProfilePhoto = asyncHandler(async (req, res) => {
   ) {
     profilePhoto = req.files?.photo[0]?.path;
   }
+  console.log(req.files);
   console.log(profilePhoto);
   const photo = await uploadOnCloudinary(profilePhoto);
   console.log(photo);
-  const user = await User.findByIdAndUpdate(
-    userId,
-    {
-      $set: { avatar: photo.url },
-    },
-    { new: true }
-  ).select("-password -refreshToken");
-  console.log(user);
+  if (photo && photo.url) {
+    const user = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: { avatar: photo.url },
+      },
+      { new: true }
+    ).select("-password -refreshToken");
+
+    console.log(user);
+    // Handle the response or send it back to the client
+    // res.status(200).json(user);
+  } else {
+    // Handle the case where photo or photo.url is null or undefined
+    console.error(
+      "Error uploading photo to Cloudinary. Photo is null or missing URL."
+    );
+    // Send an appropriate response to the client
+    // res.status(500).json({ error: 'Failed to upload photo.' });
+  }
   // res.status(200).json(user);
 });
 

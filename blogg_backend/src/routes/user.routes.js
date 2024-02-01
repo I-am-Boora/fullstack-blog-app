@@ -20,11 +20,6 @@ import {
 import { upload } from "../middlewares/multer.middleware.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
-// import cors from "cors";
-// import express from "express";
-// const app = express();
-// app.use(cors());
-
 const router = Router();
 
 router.route("/register").post(

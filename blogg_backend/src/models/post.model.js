@@ -27,6 +27,16 @@ const postSchema = new Schema(
         ref: "User",
       },
     ],
+    isLike: {
+      type: Boolean,
+      default: false,
+    },
+
+    isSave: {
+      type: Boolean,
+      default: false,
+    },
+
     comments: [
       {
         type: Schema.Types.ObjectId,

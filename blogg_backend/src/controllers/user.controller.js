@@ -202,9 +202,16 @@ const likePost = asyncHandler(async (req, res) => {
   const { post_id } = req.params;
   const { author } = req.params;
 
-  await Post.findByIdAndUpdate(post_id, {
-    $push: { likes: author },
-  });
+  await Post.findByIdAndUpdate(
+    post_id,
+    {
+      $push: { likes: author },
+      $set: { isLike: true },
+    },
+    {
+      new: true,
+    }
+  );
 
   res.status(200).json({ message: "post liked" });
 });
@@ -212,11 +219,18 @@ const likePost = asyncHandler(async (req, res) => {
 const unLikePost = asyncHandler(async (req, res) => {
   const { post_id } = req.params;
   const { author } = req.params;
-  console.log(author);
-  const post = await Post.findByIdAndUpdate(post_id, {
-    $pull: { likes: author },
-  });
-  console.log(post);
+
+  const post = await Post.findByIdAndUpdate(
+    post_id,
+    {
+      $pull: { likes: author },
+      $set: { isLike: false },
+    },
+    {
+      new: true,
+    }
+  );
+
   res.status(200).json({ message: "post liked" });
 });
 //comment
@@ -258,6 +272,45 @@ const createComment = asyncHandler(async (req, res) => {
     res.status(200).json(newComment);
   } catch (error) {
     console.error("Error creating comment:", error);
+  }
+});
+//save post
+const savePost = asyncHandler(async (req, res) => {
+  try {
+    const { Post_Id, author } = req.params;
+    await Post.updateOne({ _id: Post_Id }, { $set: { isSave: true } });
+
+    const user = await User.findByIdAndUpdate(
+      author,
+      {
+        $push: { savedPost: Post_Id },
+        $set: { isSave: true },
+      },
+      { new: true }
+    );
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: "Error can't save" });
+  }
+});
+
+//unSave post
+const unSavePost = asyncHandler(async (req, res) => {
+  try {
+    const { Post_Id, author } = req.params;
+    await Post.updateOne({ _id: Post_Id }, { $set: { isSave: true } });
+
+    const user = await User.findByIdAndUpdate(
+      author,
+      {
+        $pull: { savedPost: Post_Id },
+      },
+      { new: true }
+    );
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: "Error can't save" });
   }
 });
 //user login functionality
@@ -466,4 +519,6 @@ export {
   likePost,
   unLikePost,
   updateProfilePhoto,
+  savePost,
+  unSavePost,
 };

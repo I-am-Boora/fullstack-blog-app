@@ -33,7 +33,8 @@ const PostDetail = () => {
   const [commentCount, setCommentCount] = useState(0);
   const [likeCount, setLikeCount] = useState(0);
   const [likeIndex, setLikeIndex] = useState(null);
-
+  const [showActivity, setShowActivity] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
   const {colors} = useTheme();
   const route = useRoute();
   const {Post_Id, userInfo} = route.params;
@@ -64,6 +65,7 @@ const PostDetail = () => {
         console.log(error);
       });
   };
+
   const fetchPostDetail = useCallback(async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
@@ -73,7 +75,7 @@ const PostDetail = () => {
         `http://10.0.2.2:8080/users/posts/${Post_Id}`,
       );
       setPostDetail(response.data);
-      // console.log(response.data.comments);
+      console.log(response.data);
       setCommentCount(response.data.comments.length);
       setLikeCount(response.data.likes.length);
       if (response.data) {
@@ -90,7 +92,7 @@ const PostDetail = () => {
 
   useEffect(() => {
     fetchPostDetail();
-  }, [commentCount, likeCount]);
+  }, [commentCount, likeCount, isSaved]);
 
   const handlePostUnlike = async () => {
     await axios
@@ -117,11 +119,36 @@ const PostDetail = () => {
       });
   };
 
-  // const currentTime = new Date().getTime();
-  // const postTime = new Date(postDetail.createdAt).getTime();
-
-  // const timeDifference = currentTime - postTime;
-  // console.log(timeDifference);
+  const handleSavePost = async () => {
+    setShowActivity(true);
+    await axios
+      .post(`http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`)
+      .then(response => {
+        if (response.data) {
+          setShowActivity(false);
+          setIsSaved(!isSaved);
+        }
+      })
+      .catch(error => {
+        console.log('Error during post saved', error);
+        setShowActivity(false);
+      });
+  };
+  const handleUnsavePost = async () => {
+    setShowActivity(true);
+    await axios
+      .post(`http://10.0.2.2:8080/users/unSavePost/${Post_Id}/${author}`)
+      .then(response => {
+        if (response.data) {
+          setShowActivity(false);
+          setIsSaved(!isSaved);
+        }
+      })
+      .catch(error => {
+        console.log('Error during post saved', error);
+        setShowActivity(false);
+      });
+  };
   return (
     <ScrollView
       contentContainerStyle={{
@@ -169,11 +196,22 @@ const PostDetail = () => {
               </View>
               <Text style={{fontSize: 16, color: 'green'}}>follow</Text>
             </View>
-            <Pressable onPress={() => setSaved(!saved)}>
-              {saved ? (
-                <Icon name="bookmark" size={24} color={'#0091ea'} />
+            <Pressable>
+              {showActivity ? (
+                <ActivityIndicator color={'#0091ea'} />
+              ) : postDetail.isSave ? (
+                <Icon
+                  name="bookmark"
+                  size={24}
+                  color={'#0091ea'}
+                  onPress={handleUnsavePost}
+                />
               ) : (
-                <Icon name="bookmark-outline" size={24} />
+                <Icon
+                  name="bookmark-outline"
+                  size={24}
+                  onPress={handleSavePost}
+                />
               )}
             </Pressable>
           </View>
@@ -222,7 +260,7 @@ const PostDetail = () => {
                 columnGap: 5,
                 marginRight: scale(10),
               }}>
-              {isPostLike ? (
+              {postDetail.isLike ? (
                 <Icon
                   name="heart"
                   size={22}

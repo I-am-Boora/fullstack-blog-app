@@ -11,8 +11,10 @@ import {
   loginUser,
   refreshAccessToken,
   registerUser,
+  savePost,
   searchPost,
   unLikePost,
+  unSavePost,
   updateAccountDetails,
   updateProfilePhoto,
   updateUserAvatar,
@@ -57,6 +59,8 @@ router.route("/createComments").post(createComment);
 router.route("/postLike/:post_id/:author").post(likePost);
 router.route("/postUnlike/:post_id/:author").post(unLikePost);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
+router.route("/savePost/:Post_Id/:author").post(savePost);
+router.route("/unSavePost/:Post_Id/:author").post(unSavePost);
 router
   .route("/updateProfilePhoto/:userId")
   .post(upload.single("avatar"), updateProfilePhoto);

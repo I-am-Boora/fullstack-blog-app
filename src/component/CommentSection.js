@@ -138,7 +138,12 @@ const CommentSection = ({item, index}) => {
           <Icon name="send" size={24} />
         </View>
       )}
-      <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+      <View
+        style={{
+          justifyContent: 'center',
+          alignItems: 'center',
+          flex: 1,
+        }}>
         <Modal
           isVisible={isModalVisible}
           onBackdropPress={() => setIsModalVisible(false)}
@@ -148,10 +153,11 @@ const CommentSection = ({item, index}) => {
             flex: 1,
             backgroundColor: 'white',
             width: deviceWidth,
-
+            paddingHorizontal: 5,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             justifyContent: 'center',
+            backgroundColor: colors.background,
             alignSelf: 'center',
             marginBottom: 0,
           }}>

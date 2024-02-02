@@ -13,6 +13,7 @@ const UserContextProvider = ({children}) => {
       if (token) {
         const userId = await AsyncStorage.getItem('userId');
         // Fetch user data based on the token and setLoginInfo
+
         const response = await axios.get(
           `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
         );

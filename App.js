@@ -29,13 +29,6 @@ const App = () => {
   const Bottom = createBottomTabNavigator();
   const Stack = createStackNavigator();
   const {colors} = useTheme();
-  // useEffect(() => {
-  //   const getToken = async () => {
-  //     const token = await AsyncStorage.getItem('authToken');
-  //     setUser(token);
-  //   };
-  //   getToken();
-  // }, []);
 
   const TabBarIcon = ({focused, name, color, size}) => {
     return focused ? (

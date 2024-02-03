@@ -12,7 +12,7 @@ export const darkTheme = {
     secondaryBackground: '#002432',
     tabBackground: '#006c97',
     tabIcon: '#00b4fc',
-    imageIconColor: '#007eb0',
+    imageIconColor: '#004865',
     imageIconText: '#00b4fc',
   },
 };
@@ -28,10 +28,10 @@ export const lightTheme = {
     background: '#ffffff',
     lightBlack: '#424242',
     borderColor: '#424242',
-    secondaryBackground: '#f5f5f5',
+    secondaryBackground: '#fafafa',
     tabBackground: '#f5f5f5',
     tabIcon: '#00b4fc',
-    imageIconColor: '#e0e0e0',
+    imageIconColor: '#eeeeee',
     imageIconText: '#424242',
   },
 };

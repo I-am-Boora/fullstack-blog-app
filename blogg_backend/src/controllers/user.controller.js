@@ -246,7 +246,13 @@ const comment = asyncHandler(async (req, res) => {
   // console.log(post.comments[0].author);
   return res.status(200).json(post);
 });
-
+//get saved posts
+const getSavedPosts = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findById(userId).populate("savedPost");
+  console.log(user);
+  res.status(200).json(user);
+});
 //createComment
 const createComment = asyncHandler(async (req, res) => {
   try {
@@ -521,4 +527,5 @@ export {
   updateProfilePhoto,
   savePost,
   unSavePost,
+  getSavedPosts,
 };

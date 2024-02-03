@@ -34,7 +34,7 @@ const PostDetail = () => {
   const [likeCount, setLikeCount] = useState(0);
   const [likeIndex, setLikeIndex] = useState(null);
   const [showActivity, setShowActivity] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(null);
   const {colors} = useTheme();
   const route = useRoute();
   const {Post_Id, userInfo} = route.params;
@@ -92,7 +92,7 @@ const PostDetail = () => {
 
   useEffect(() => {
     fetchPostDetail();
-  }, [commentCount, likeCount, isSaved]);
+  }, [commentCount, likeCount, saved]);
 
   const handlePostUnlike = async () => {
     await axios
@@ -110,7 +110,7 @@ const PostDetail = () => {
     await axios
       .post(`http://10.0.2.2:8080/users/postLike/${Post_Id}/${author}`)
       .then(response => {
-        console.log(response.data);
+        console.log(response.data.isSave);
         setIsPostLike(!isPostLike);
         setLikeCount(prev => prev + 1);
       })
@@ -121,33 +121,34 @@ const PostDetail = () => {
 
   const handleSavePost = async () => {
     setShowActivity(true);
-    await axios
-      .post(`http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`)
-      .then(response => {
-        if (response.data) {
-          setShowActivity(false);
-          setIsSaved(!isSaved);
-        }
-      })
-      .catch(error => {
-        console.log('Error during post saved', error);
-        setShowActivity(false);
-      });
+    try {
+      const response = await axios.post(
+        `http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`,
+      );
+      if (response.data) {
+        setSaved(response.data.isSave);
+      }
+    } catch (error) {
+      console.log('Error during post saved', error);
+    } finally {
+      setShowActivity(false);
+    }
   };
+
   const handleUnsavePost = async () => {
     setShowActivity(true);
-    await axios
-      .post(`http://10.0.2.2:8080/users/unSavePost/${Post_Id}/${author}`)
-      .then(response => {
-        if (response.data) {
-          setShowActivity(false);
-          setIsSaved(!isSaved);
-        }
-      })
-      .catch(error => {
-        console.log('Error during post saved', error);
-        setShowActivity(false);
-      });
+    try {
+      const response = await axios.post(
+        `http://10.0.2.2:8080/users/unSavePost/${Post_Id}/${author}`,
+      );
+      if (response.data) {
+        setSaved(!response.data.isSave);
+      }
+    } catch (error) {
+      console.log('Error during post un-saved', error);
+    } finally {
+      setShowActivity(false);
+    }
   };
   return (
     <ScrollView

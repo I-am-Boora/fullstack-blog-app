@@ -7,6 +7,7 @@ import {
   createPost,
   getCurrentUser,
   getLoginInfo,
+  getSavedPosts,
   likePost,
   loginUser,
   refreshAccessToken,
@@ -61,6 +62,8 @@ router.route("/postUnlike/:post_id/:author").post(unLikePost);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
 router.route("/savePost/:Post_Id/:author").post(savePost);
 router.route("/unSavePost/:Post_Id/:author").post(unSavePost);
+router.route("/getSavedPosts/:userId").post(getSavedPosts);
+
 router
   .route("/updateProfilePhoto/:userId")
   .post(upload.single("avatar"), updateProfilePhoto);

@@ -27,13 +27,22 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
             source={{
               uri: item?.photo,
             }}
-            style={styles.image}
+            style={[
+              styles.image,
+              {
+                height:
+                  item.title.length > 35
+                    ? verticalScale(90)
+                    : verticalScale(70),
+              },
+            ]}
           />
         ) : (
           <View
             style={{
-              width: 70,
-              height: 70,
+              width: scale(70),
+              height:
+                item.title.length > 35 ? verticalScale(90) : verticalScale(70),
               // borderWidth: 0.7,
               borderRadius: 8,
               justifyContent: 'center',
@@ -41,6 +50,7 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
               backgroundColor: colors.imageIconColor,
               // borderColor: 'black',
             }}>
+            {console.log(item.title.length)}
             <Text
               style={{
                 fontSize: moderateScale(40),
@@ -52,8 +62,23 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
         )}
       </View>
       <View style={styles.rightContainer}>
-        <Text style={styles.authorTitle}>{item.category}</Text>
-        <Text style={[styles.postTitle, {color: colors.text}]}>
+        <View
+          style={{
+            backgroundColor: colors.imageIconColor,
+            width: `${item.category.length * 3.2}%`,
+            paddingHorizontal: 3,
+            alignItems: 'center',
+            paddingVertical: verticalScale(2),
+            paddingHorizontal: scale(2),
+
+            borderRadius: 20,
+          }}>
+          <Text style={[styles.authorTitle]}>{item.category}</Text>
+        </View>
+
+        <Text
+          style={[styles.postTitle, {color: colors.text}]}
+          numberOfLines={2}>
           {item.title.length > 62
             ? `${item.title.slice(0, 62)}...`
             : item.title}
@@ -75,15 +100,22 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
             <Image
               source={require('../assets/images/blank-profile.png')}
               style={{
-                width: scale(18),
-                height: verticalScale(18),
-                borderRadius: moderateScale(18),
+                width: scale(16),
+                height: verticalScale(16),
+                borderRadius: moderateScale(16),
                 resizeMode: 'cover',
+                marginRight: scale(6),
               }}
             />
           )}
 
-          <Text style={styles.authorTitle}>{item?.author?.fullName} ・ </Text>
+          <Text
+            style={[
+              styles.authorTitle,
+              {fontFamily: 'Poppins-Medium', fontSize: moderateScale(13)},
+            ]}>
+            {item?.author?.fullName} ・{' '}
+          </Text>
           <Text style={styles.authorTitle}>
             {calculateTimeAgo(item?.createdAt)}
           </Text>
@@ -100,6 +132,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(15),
     flexDirection: 'row',
     marginVertical: verticalScale(3),
+    paddingBottom: 3,
   },
   leftContainer: {
     paddingTop: verticalScale(5),
@@ -108,13 +141,15 @@ const styles = StyleSheet.create({
 
   image: {
     width: scale(70),
-    height: verticalScale(70),
+
     resizeMode: 'cover',
     borderRadius: moderateScale(8),
   },
   rightContainer: {
     paddingHorizontal: scale(10),
     paddingTop: verticalScale(5),
+    rowGap: 8,
+    flex: 1,
   },
   postTitle: {
     fontSize: moderateScale(17),
@@ -123,12 +158,12 @@ const styles = StyleSheet.create({
   authorSection: {
     flexDirection: 'row',
     // paddingBottom: verticalScale(3),
-    marginVertical: verticalScale(3),
+    // paddingTop: 9,
+    // marginVertical: verticalScale(3),
     alignItems: 'center',
   },
   authorTitle: {
-    fontFamily: 'Poppins-Regular',
-    paddingLeft: scale(3),
+    // paddingLeft: scale(3),
     fontSize: moderateScale(12),
   },
 });

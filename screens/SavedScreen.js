@@ -20,7 +20,7 @@ const SavedScreen = () => {
   useEffect(() => {
     getSavedPosts();
   }, []);
-  // console.log(allPost);
+  console.log(allPost);
   return (
     <View>
       <Text>SavedScreen</Text>

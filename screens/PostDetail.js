@@ -323,10 +323,6 @@ const PostDetail = () => {
                     height: 40,
                   },
                 ]}
-                // value={content}
-                // onChangeText={text => {
-                //   setContent(text);
-                // }}
               />
               <Icon name="send-outline" size={24} onPress={handleComment} />
             </View>

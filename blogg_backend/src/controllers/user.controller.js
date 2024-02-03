@@ -116,14 +116,22 @@ const createPost = asyncHandler(async (req, res) => {
     content,
     author,
   });
-
+  const user = await User.findById(author);
+  user.posts.push(post);
+  await user.save();
   // const posts = await Post.find()
   return res.status(201).json({ message: "Posted", data: post });
 });
 //get login info
 const getLoginInfo = asyncHandler(async (req, res) => {
   const userId = req.params.userId;
-  const user = await User.findById(userId).select("-password");
+  const user = await User.findById(userId)
+    .populate({
+      path: "savedPost",
+      model: Post,
+    })
+    .populate({ path: "posts", model: Post })
+    .exec();
   // console.log(user);
 
   return res.status(200).json({ user });
@@ -249,7 +257,7 @@ const comment = asyncHandler(async (req, res) => {
 //get saved posts
 const getSavedPosts = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = await User.findById(userId).populate("savedPost");
+  const user = await User.findById(userId).populate("savedPost").exec();
   console.log(user);
   res.status(200).json(user);
 });

@@ -5,6 +5,7 @@ import {
   View,
   Pressable,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
@@ -13,6 +14,8 @@ import {userContext} from '../src/utils/UserContextProvider';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
+import ProfilePost from '../src/component/ProfilePost';
+
 const ProfileScreen = () => {
   const [userInfo, setUserInfo] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
@@ -25,38 +28,7 @@ const ProfileScreen = () => {
     await AsyncStorage.removeItem('userId');
     navigation.navigate('Login');
   };
-  // const getUserInfo = useCallback(async () => {
-  //   const userId = await AsyncStorage.getItem('userId');
-  //   // Fetch user data based on the token and setLoginInfo
-  //   console.log(userId);
-  //   if (userId) {
-  //     const response = await axios.get(
-  //       `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
-  //     );
-  //     console.log(response.data);
-  //     if (response.data) {
-  //       setProfilePhoto(response.data);
-  //     }
-  //   }
-  // });
-  // useEffect(() => {
-  //   // getUserInfo();
-  //   const getLoginInfo = async () => {
-  //     const userId = await AsyncStorage.getItem('userId');
-  //     // Fetch user data based on the token and setLoginInfo
-  //     console.log(userId);
-  //     if (userId) {
-  //       const response = await axios.get(
-  //         `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
-  //       );
-  //       console.log(response.data);
-  //       if (response.data) {
-  //         setUserInfo(response.data);
-  //       }
-  //     }
-  //   };
-  //   getLoginInfo();
-  // }, []);
+
   const handleProfileImage = async () => {
     await launchImageLibrary({noData: true}, response => {
       // console.log(response);
@@ -101,9 +73,9 @@ const ProfileScreen = () => {
       }
     }
   };
-  // console.log(loginInfo);
+  console.log(loginInfo.user.posts);
   return loginInfo ? (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Pressable
         onPress={handleLogout}
         style={{
@@ -171,9 +143,15 @@ const ProfileScreen = () => {
         </Text>
       </View>
       <View style={styles.postSection}>
-        <Text style={styles.profileName}>No posts</Text>
+        {loginInfo.user.posts ? (
+          loginInfo?.user?.posts.map(item => (
+            <ProfilePost item={item} key={item._id} />
+          ))
+        ) : (
+          <Text style={styles.profileName}>No posts</Text>
+        )}
       </View>
-    </View>
+    </ScrollView>
   ) : (
     <ActivityIndicator />
   );
@@ -184,7 +162,7 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
+    // alignItems: 'center',
     paddingHorizontal: scale(10),
   },
   profileContainer: {
@@ -223,14 +201,14 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   postSection: {
-    flex: 1,
-    borderRadius: moderateScale(15),
-    borderWidth: moderateScale(0.4),
-    width: '100%',
-    marginVertical: verticalScale(10),
-    padding: scale(5),
-    justifyContent: 'center',
-    alignItems: 'center',
+    // flex: 1,
+    // borderRadius: moderateScale(15),
+    // borderWidth: moderateScale(0.4),
+    // width: '100%',
+    // marginVertical: verticalScale(10),
+    // padding: scale(5),
+    // justifyContent: 'center',
+    // alignItems: 'center',
   },
   allpost: {
     borderRadius: moderateScale(15),

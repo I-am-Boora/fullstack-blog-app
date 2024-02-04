@@ -151,7 +151,7 @@ const allPosts = asyncHandler(async (req, res) => {
   try {
     // Fetch all posts with user information
     const posts = await Post.find()
-      .sort({ createdAt: -1 })
+
       .populate({
         path: "author",
         model: User,
@@ -162,6 +162,7 @@ const allPosts = asyncHandler(async (req, res) => {
         model: User,
         select: "fullName avatar",
       })
+      .sort({ createdAt: -1 })
       .exec();
 
     res.status(200).json({ data: posts });
@@ -258,9 +259,14 @@ const comment = asyncHandler(async (req, res) => {
   // const { commentContent, author } = req.body;
   //  const posts = await Post.find({ author: user_id });
 
-  const post = await Post.findById(Post_Id)
-    .populate("comments")
-    .sort({ createdAt: -1 });
+  const post = await Post.findOne({ _id: Post_Id }).populate({
+    path: "comments",
+    populate: {
+      path: "author",
+      select: "username avatar", // Include only the username and avatar in the result
+    },
+    options: { sort: { createdAt: -1 } },
+  });
   // await Comment.find({ postID: Post_Id }).populate("author");
   // console.log(post);
   if (!post) {

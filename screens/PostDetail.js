@@ -52,6 +52,7 @@ const PostDetail = () => {
         Post_Id,
       })
       .then(function (response) {
+        console.log(response.data);
         setComments(response.data.newComment);
         setCommentCount(prev => prev + 1);
         // console.log(response.data);
@@ -75,7 +76,7 @@ const PostDetail = () => {
         `http://10.0.2.2:8080/users/posts/${Post_Id}`,
       );
       setPostDetail(response.data);
-      console.log(response.data);
+      // console.log(response.data.comments[0].author.username);
       setCommentCount(response.data.comments.length);
       setLikeCount(response.data.likes.length);
       if (response.data) {
@@ -150,6 +151,7 @@ const PostDetail = () => {
       setShowActivity(false);
     }
   };
+
   return (
     <ScrollView
       contentContainerStyle={{

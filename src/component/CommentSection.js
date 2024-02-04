@@ -27,7 +27,7 @@ const CommentSection = ({item, index}) => {
   };
   const deviceWidth = Dimensions.get('window').width;
   const deviceHeight = Dimensions.get('window').height;
-
+  // console.log(item);
   return (
     <View
       key={item._id}
@@ -37,12 +37,19 @@ const CommentSection = ({item, index}) => {
       ]}>
       <View style={styles.userInfo}>
         <View style={styles.imageContainer}>
-          <Image
-            source={{
-              uri: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-            }}
-            style={styles.commentUserImage}
-          />
+          {item?.author?.avatar ? (
+            <Image
+              source={{
+                uri: item?.author?.avatar,
+              }}
+              style={styles.commentUserImage}
+            />
+          ) : (
+            <Image
+              source={require('../assets/images/blank-profile.png')}
+              style={styles.commentUserImage}
+            />
+          )}
         </View>
         <View style={styles.userProfileContainer}>
           <View
@@ -58,7 +65,7 @@ const CommentSection = ({item, index}) => {
                 fontWeight: '400',
                 // fontFamily: 'Poppins-Regular',
               }}>
-              @iamboora・
+              {item?.author?.username}・
             </Text>
             <Text style={{fontSize: 12}}>
               {calculateTimeAgo(item.createdAt)}

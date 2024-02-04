@@ -18,12 +18,13 @@ import PostComponent from '../src/component/PostComponent';
 import {userContext} from '../src/utils/UserContextProvider';
 import axios from 'axios';
 import {calculateTimeAgo} from '../src/utils/utilityFunction';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const [search, setSearch] = useState('');
   const {colors} = useTheme();
 
-  const {posts, setPosts, loginInfo} = useContext(userContext);
+  const {posts, setPosts, loginInfo, deletePost} = useContext(userContext);
   const getAllPosts = useCallback(async () => {
     try {
       const response = await axios.get('http://10.0.2.2:8080/users/allPosts');
@@ -32,15 +33,26 @@ const HomeScreen = ({navigation}) => {
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }, [deletePost]);
   useEffect(() => {
     getAllPosts();
   }, [getAllPosts]);
   // console.log(search);
+  const logout = async () => {
+    await AsyncStorage.removeItem('authToken');
+    await AsyncStorage.removeItem('userId');
+    navigation.navigate('Login');
+  };
   const renderHeader = () => {
     return (
       <View style={styles.container}>
         <Text style={[styles.title, {color: colors.text}]}>Discover</Text>
+        <Text
+          onPress={() => {
+            logout();
+          }}>
+          Logout
+        </Text>
         <View
           style={[
             styles.imageContainer,

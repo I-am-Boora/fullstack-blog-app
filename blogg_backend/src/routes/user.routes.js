@@ -5,6 +5,7 @@ import {
   comment,
   createComment,
   createPost,
+  deletePost,
   getCurrentUser,
   getLoginInfo,
   getSavedPosts,
@@ -63,6 +64,7 @@ router.route("/getUserInfo/:userId").get(getLoginInfo);
 router.route("/savePost/:Post_Id/:author").post(savePost);
 router.route("/unSavePost/:Post_Id/:author").post(unSavePost);
 router.route("/getSavedPosts/:userId").post(getSavedPosts);
+router.route("/deletePost/:post_id/:user_id").put(deletePost);
 
 router
   .route("/updateProfilePhoto/:userId")

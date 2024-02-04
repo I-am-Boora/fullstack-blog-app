@@ -136,11 +136,22 @@ const getLoginInfo = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ user });
 });
+//delete post
+const deletePost = asyncHandler(async (req, res) => {
+  const { post_id } = req.params;
+  const { user_id } = req.params;
+  await User.findByIdAndUpdate(user_id, {
+    $pull: { posts: post_id },
+  });
+  await Post.findByIdAndDelete(post_id);
+  res.status(200).json({ message: "post deleted" });
+});
 //get all posts
 const allPosts = asyncHandler(async (req, res) => {
   try {
     // Fetch all posts with user information
     const posts = await Post.find()
+      .sort({ createdAt: -1 })
       .populate({
         path: "author",
         model: User,
@@ -245,7 +256,11 @@ const unLikePost = asyncHandler(async (req, res) => {
 const comment = asyncHandler(async (req, res) => {
   const { Post_Id } = req.params;
   // const { commentContent, author } = req.body;
-  const post = await Post.findById(Post_Id).populate("comments");
+  //  const posts = await Post.find({ author: user_id });
+
+  const post = await Post.findById(Post_Id)
+    .populate("comments")
+    .sort({ createdAt: -1 });
   // await Comment.find({ postID: Post_Id }).populate("author");
   // console.log(post);
   if (!post) {
@@ -536,4 +551,5 @@ export {
   savePost,
   unSavePost,
   getSavedPosts,
+  deletePost,
 };

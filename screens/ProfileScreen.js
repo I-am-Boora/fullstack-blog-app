@@ -16,18 +16,23 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import ProfilePost from '../src/component/ProfilePost';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   const [userInfo, setUserInfo] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState(null);
   const [avatar, setAvatar] = useState(null);
   const {colors} = useTheme();
   const {loginInfo} = useContext(userContext);
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const handleLogout = async () => {
     await AsyncStorage.removeItem('authToken');
     await AsyncStorage.removeItem('userId');
     navigation.navigate('Login');
   };
+  useEffect(() => {
+    if (!loginInfo) {
+      navigation.navigate('Login');
+    }
+  }, []);
 
   const handleProfileImage = async () => {
     await launchImageLibrary({noData: true}, response => {
@@ -73,7 +78,7 @@ const ProfileScreen = () => {
       }
     }
   };
-  console.log(loginInfo.user.posts);
+
   return loginInfo ? (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       <Pressable
@@ -143,7 +148,7 @@ const ProfileScreen = () => {
         </Text>
       </View>
       <View style={styles.postSection}>
-        {loginInfo.user.posts ? (
+        {loginInfo?.user?.posts ? (
           loginInfo?.user?.posts.map(item => (
             <ProfilePost item={item} key={item._id} />
           ))

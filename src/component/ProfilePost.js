@@ -1,17 +1,39 @@
-import {Image, StyleSheet, Text, View, ScrollView} from 'react-native';
+import {
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import React, {useCallback, useContext, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useTheme} from '@react-navigation/native';
 import {userContext} from '../utils/UserContextProvider';
 import {calculateTimeAgo} from '../utils/utilityFunction';
-
+import Modal from 'react-native-modal';
+import axios from 'axios';
 const ProfilePost = ({item}) => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const {colors} = useTheme();
-  const {loginInfo} = useContext(userContext);
-  if (item) {
-    console.log(item.title);
-  }
+  const {loginInfo, setDeletePost} = useContext(userContext);
+  const deletePost = async () => {
+    setIsModalVisible(false);
+    await axios
+      .put(
+        `http://10.0.2.2:8080/users/deletePost/${item._id}/${loginInfo.user._id}`,
+      )
+      .then(response => {
+        if (response.data) {
+          console.log(response.data);
+          setDeletePost(loginInfo.user.posts.length - 1);
+        }
+      })
+      .catch(error => {
+        console.log('error deleting post', error);
+      });
+  };
   return (
     <View
       style={[styles.container, {backgroundColor: colors.secondaryBackground}]}>
@@ -49,7 +71,13 @@ const ProfilePost = ({item}) => {
           </View>
         </View>
         <View>
-          <Icon name="ellipsis-horizontal" size={24} />
+          <Icon
+            name="ellipsis-horizontal"
+            size={24}
+            onPress={() => {
+              setIsModalVisible(true);
+            }}
+          />
         </View>
       </View>
       <View style={styles.contentSection}>
@@ -60,7 +88,7 @@ const ProfilePost = ({item}) => {
           {item?.content?.length > 120
             ? item?.content?.slice(0, 120)
             : item?.content}
-          {item?.content.length > 100 && (
+          {item?.content?.length > 100 && (
             <Text onPress={() => {}} style={{fontWeight: '500'}}>
               ...readMore
             </Text>
@@ -97,6 +125,53 @@ const ProfilePost = ({item}) => {
           }}>
           {item?.category}
         </Text>
+      </View>
+      <View>
+        <Modal
+          isVisible={isModalVisible}
+          onBackdropPress={() => setIsModalVisible(false)}
+          onBackButtonPress={() => {
+            setIsModalVisible(false);
+          }}
+          animationOutTiming={600}
+          animationIn={'zoomIn'}
+          animationOut={'zoomOut'}>
+          <View
+            style={{
+              backgroundColor: colors.background,
+              height: verticalScale(100),
+              borderRadius: moderateScale(15),
+            }}>
+            <View
+              style={{
+                alignItems: 'flex-end',
+                paddingRight: scale(20),
+                marginTop: verticalScale(10),
+              }}>
+              <Icon
+                name="close-outline"
+                size={24}
+                onPress={() => {
+                  setIsModalVisible(false);
+                }}
+              />
+            </View>
+
+            <Pressable
+              onPress={deletePost}
+              style={{
+                flex: 1,
+                flexDirection: 'row',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <Text style={{fontSize: moderateScale(18), paddingRight: 10}}>
+                Delete Post
+              </Text>
+              <Icon name="trash-outline" size={20} color={'red'} />
+            </Pressable>
+          </View>
+        </Modal>
       </View>
     </View>
   );

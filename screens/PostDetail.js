@@ -326,7 +326,7 @@ const PostDetail = () => {
                   },
                 ]}
               />
-              <Icon name="send-outline" size={24} onPress={handleComment} />
+              <Icon name="send" size={24} onPress={handleComment} />
             </View>
           </View>
 

@@ -80,11 +80,8 @@ const CommentSection = ({item, index}) => {
               style={{
                 fontSize: 14,
                 lineHeight: 20,
-                paddingHorizontal: scale(5),
                 color: colors.text,
                 marginRight: 15,
-                // width: '100%',
-                // marginLeft: 45,
               }}>
               {isClickOnReadMore
                 ? item?.commentContent?.commentContent
@@ -141,7 +138,7 @@ const CommentSection = ({item, index}) => {
 
       {openReplyIndex == index && (
         <View behavior="padding" style={styles.replyContainer}>
-          <TextInput placeholder="reply" />
+          <TextInput placeholder="reply" style={{flex: 1}} />
           <Icon name="send" size={24} />
         </View>
       )}

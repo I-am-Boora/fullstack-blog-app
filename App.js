@@ -22,6 +22,8 @@ import {createStackNavigator} from '@react-navigation/stack';
 import PostDetail from './screens/PostDetail';
 import RegisterScreen from './screens/RegisterScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FollowerScreen from './screens/FollowerScreen';
+import FollowingScreen from './screens/FollowingScreen';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -155,6 +157,8 @@ const App = () => {
           <Stack.Screen name="Main" component={BottomTabNavigator} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="PostDetail" component={PostDetail} />
+          <Stack.Screen name="Follower" component={FollowerScreen} />
+          <Stack.Screen name="Following" component={FollowingScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserContextProvider>

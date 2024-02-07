@@ -120,23 +120,35 @@ const ProfileScreen = ({navigation}) => {
         </View>
         <View style={styles.rightContainer}>
           <View style={styles.followerandpost}>
-            <View style={styles.followerContainer}>
+            <Pressable
+              style={styles.followerContainer}
+              onPress={() => {
+                navigation.navigate('Follower');
+              }}>
               <Text style={[styles.profileName, {color: colors.text}]}>
                 Followers
               </Text>
-              <Text style={styles.follower}>131k</Text>
-            </View>
-            <View style={styles.postContainer}>
+              <Text style={styles.follower}>
+                {loginInfo?.user?.followers?.length}
+              </Text>
+            </Pressable>
+            <Pressable
+              style={styles.postContainer}
+              onPress={() => {
+                navigation.navigate('Follower');
+              }}>
               <Text style={[styles.profileName, {color: colors.text}]}>
                 Followings
               </Text>
-              <Text style={styles.post}>188</Text>
-            </View>
+              <Text style={styles.post}>
+                {loginInfo?.user?.followings?.length}
+              </Text>
+            </Pressable>
             <View style={styles.postContainer}>
               <Text style={[styles.profileName, {color: colors.text}]}>
                 Posts
               </Text>
-              <Text style={styles.post}>121</Text>
+              <Text style={styles.post}>{loginInfo?.user?.posts?.length}</Text>
             </View>
           </View>
         </View>

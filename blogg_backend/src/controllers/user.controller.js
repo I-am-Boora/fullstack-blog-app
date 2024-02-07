@@ -130,11 +130,30 @@ const getLoginInfo = asyncHandler(async (req, res) => {
       path: "savedPost",
       model: Post,
     })
+    .populate({
+      path: "followings",
+      model: User,
+      select: "fullName avatar",
+    })
+    .populate({
+      path: "followers",
+      model: User,
+      select: "fullName avatar",
+    })
     .populate({ path: "posts", model: Post })
     .exec();
   // console.log(user);
 
   return res.status(200).json({ user });
+});
+//get all users info
+const getAllUsers = asyncHandler(async (req, res) => {
+  const userId = jwt.verify(req.params.user, process.env.ACCESS_TOKEN_SECRET);
+  const users = await User.find({ _id: { $ne: userId._id } }).select(
+    "fullName username avatar"
+  );
+
+  res.status(200).json(users);
 });
 //delete post
 const deletePost = asyncHandler(async (req, res) => {
@@ -558,4 +577,5 @@ export {
   unSavePost,
   getSavedPosts,
   deletePost,
+  getAllUsers,
 };

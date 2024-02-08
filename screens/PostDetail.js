@@ -70,8 +70,10 @@ const PostDetail = () => {
   const fetchPostDetail = useCallback(async () => {
     try {
       const userId = await AsyncStorage.getItem('userId');
+      if (userId) {
+        setAuthor(userId);
+      }
 
-      setAuthor(userId);
       const response = await axios.get(
         `http://10.0.2.2:8080/users/posts/${Post_Id}`,
       );
@@ -89,11 +91,11 @@ const PostDetail = () => {
       console.error('Error fetching comments:', error);
       // setLoading(false);
     }
-  }, [Post_Id, postDetail]);
+  }, [Post_Id, postDetail, saved]);
 
   useEffect(() => {
     fetchPostDetail();
-  }, [commentCount, likeCount, saved]);
+  }, [commentCount, likeCount, saved, showActivity]);
 
   const handlePostUnlike = async () => {
     await axios
@@ -123,27 +125,29 @@ const PostDetail = () => {
   const handleSavePost = async () => {
     setShowActivity(true);
     try {
-      const response = await axios.post(
-        `http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`,
-      );
-      if (response.data) {
-        setSaved(response.data.isSave);
-      }
+      await axios
+        .put(`http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`)
+        .then(response => {
+          if (response.data) {
+            setSaved(response.data.isSave);
+            setShowActivity(false);
+          }
+        })
+        .catch(error => console.log('error during un-save post', error));
     } catch (error) {
-      console.log('Error during post saved', error);
-    } finally {
-      setShowActivity(false);
+      console.log('error handing un-save post', error);
     }
   };
 
   const handleUnsavePost = async () => {
     setShowActivity(true);
     try {
-      const response = await axios.post(
+      const response = await axios.put(
         `http://10.0.2.2:8080/users/unSavePost/${Post_Id}/${author}`,
       );
       if (response.data) {
-        setSaved(!response.data.isSave);
+        setSaved(response.data.isSave);
+        setShowActivity(false);
       }
     } catch (error) {
       console.log('Error during post un-saved', error);
@@ -319,7 +323,6 @@ const PostDetail = () => {
                   {
                     borderColor: colors.borderColor,
                     flex: 1,
-                    // width: '70%',
                     paddingHorizontal: scale(10),
 
                     height: 40,

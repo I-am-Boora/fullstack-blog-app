@@ -162,7 +162,7 @@ const PostScreen = () => {
     if (postData) {
       var timeoutId = setTimeout(() => {
         setShowBanner(false);
-      }, 3000);
+      }, 1000);
     }
     // Clear the timeout if the component unmounts or showBanner changes
     return () => clearTimeout(timeoutId);

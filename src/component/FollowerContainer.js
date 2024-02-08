@@ -1,11 +1,71 @@
 import {Image, Pressable, StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useCallback, useContext, useEffect, useState} from 'react';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {useTheme} from '@react-navigation/native';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {userContext} from '../utils/UserContextProvider';
 
 const FollowerContainer = ({item}) => {
-  console.log(item?.fullName, item?.username);
+  const [isClicked, setIsClicked] = useState(false);
+  const [isFollow, setIsFollow] = useState([]);
   const {colors} = useTheme();
+  const {loginInfo} = useContext(userContext);
+  const {setFollowingCount} = useContext(userContext);
+
+  const handleFollow = async targentUserId => {
+    const userId = await AsyncStorage.getItem('userId');
+    if (!userId) {
+      console.log("userID doesn't exists!!");
+      return;
+    }
+    if (!isClicked) {
+      try {
+        await axios
+          .post(`http://10.0.2.2:8080/users/follow/${userId}/${targentUserId}`)
+          .then(response => {
+            if (response.data) {
+              const updatedFollowings = response.data.followings;
+              setIsFollow(updatedFollowings);
+              setFollowingCount(response.data.followings.length);
+              setIsClicked(updatedFollowings.includes(targentUserId));
+              console.log(updatedFollowings);
+            }
+          })
+          .catch(error => {
+            console.log('error handling follow', error);
+          });
+      } catch (error) {
+        console.log('error getting follow user', error);
+      }
+    } else {
+      try {
+        await axios
+          .post(
+            `http://10.0.2.2:8080/users/unFollow/${userId}/${targentUserId}`,
+          )
+          .then(response => {
+            if (response.data) {
+              const updatedFollowings = response.data.followings;
+              setIsFollow(updatedFollowings);
+              setFollowingCount(response.data.followings.length);
+              setIsClicked(updatedFollowings.includes(targentUserId));
+              console.log(updatedFollowings);
+            }
+          })
+          .catch(error => {
+            console.log('error handling follow', error);
+          });
+      } catch (error) {
+        console.log('error getting follow user', error);
+      }
+    }
+  };
+  useEffect(() => {
+    handleFollow();
+    console.log(loginInfo.user.followings);
+  }, []);
+
   return (
     <View
       style={[
@@ -46,9 +106,20 @@ const FollowerContainer = ({item}) => {
             <Text style={{fontSize: moderateScale(14)}}>{item?.username}</Text>
           </View>
         </View>
-        <Pressable style={styles.followContainer}>
-          <Text style={{fontSize: moderateScale(16), color: colors.text}}>
-            follow
+        <Pressable
+          style={[
+            styles.followContainer,
+            {borderColor: isClicked ? '#7ab317' : 'grey'},
+          ]}
+          onPress={() => {
+            handleFollow(item._id);
+          }}>
+          <Text
+            style={{
+              fontSize: moderateScale(16),
+              color: isClicked ? '#7ab317' : colors.text,
+            }}>
+            {isClicked ? 'following' : 'follow'}
           </Text>
         </Pressable>
       </View>
@@ -76,7 +147,6 @@ const styles = StyleSheet.create({
   followContainer: {
     borderWidth: moderateScale(1),
     borderRadius: moderateScale(100),
-    borderColor: 'grey',
     paddingHorizontal: scale(10),
     paddingVertical: verticalScale(3),
   },

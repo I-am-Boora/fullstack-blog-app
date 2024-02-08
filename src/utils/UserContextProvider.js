@@ -9,6 +9,7 @@ const UserContextProvider = ({children}) => {
   const [posts, setPosts] = useState([]);
   const [loginInfo, setLoginInfo] = useState(null);
   const [deletePost, setDeletePost] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   const checkLoginStatus = async () => {
     const token = await AsyncStorage.getItem('authToken');
@@ -22,6 +23,7 @@ const UserContextProvider = ({children}) => {
 
       if (response.data) {
         setLoginInfo(response.data);
+
         if (response.data.user.posts) {
           setDeletePost(response.data.user.posts.length);
         }
@@ -30,7 +32,7 @@ const UserContextProvider = ({children}) => {
   };
   useEffect(() => {
     checkLoginStatus();
-  }, [deletePost]);
+  }, [deletePost, followingCount]);
   return (
     <userContext.Provider
       value={{
@@ -40,6 +42,8 @@ const UserContextProvider = ({children}) => {
         setLoginInfo,
         deletePost,
         setDeletePost,
+        followingCount,
+        setFollowingCount,
       }}>
       {children}
     </userContext.Provider>

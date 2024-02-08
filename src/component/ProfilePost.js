@@ -21,12 +21,10 @@ const ProfilePost = ({item}) => {
   const deletePost = async () => {
     setIsModalVisible(false);
     await axios
-      .put(
-        `http://10.0.2.2:8080/users/deletePost/${item._id}/${loginInfo.user._id}`,
-      )
+      .delete(`http://10.0.2.2:8080/users/deletePost/${item._id}`)
       .then(response => {
         if (response.data) {
-          console.log(response.data);
+          // console.log(response.data);
           setDeletePost(loginInfo.user.posts.length - 1);
         }
       })

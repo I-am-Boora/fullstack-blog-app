@@ -148,8 +148,8 @@ const getLoginInfo = asyncHandler(async (req, res) => {
 });
 //get all users info
 const getAllUsers = asyncHandler(async (req, res) => {
-  const userId = jwt.verify(req.params.user, process.env.ACCESS_TOKEN_SECRET);
-  const users = await User.find({ _id: { $ne: userId._id } }).select(
+  const { user } = req.params;
+  const users = await User.find({ _id: { $ne: user } }).select(
     "fullName username avatar"
   );
 
@@ -158,11 +158,7 @@ const getAllUsers = asyncHandler(async (req, res) => {
 //delete post
 const deletePost = asyncHandler(async (req, res) => {
   const { post_id } = req.params;
-  const { user_id } = req.params;
-  await User.findByIdAndUpdate(user_id, {
-    $pull: { posts: post_id },
-  });
-  await Post.findByIdAndDelete(post_id);
+  await Post.deleteOne({ _id: post_id });
   res.status(200).json({ message: "post deleted" });
 });
 //get all posts
@@ -174,7 +170,7 @@ const allPosts = asyncHandler(async (req, res) => {
       .populate({
         path: "author",
         model: User,
-        select: "fullName avatar", // Select the fields you want to include
+        select: "fullName avatar username", // Select the fields you want to include
       })
       .populate({
         path: "likes",
@@ -297,9 +293,90 @@ const comment = asyncHandler(async (req, res) => {
 //get saved posts
 const getSavedPosts = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const user = await User.findById(userId).populate("savedPost").exec();
-  console.log(user);
+  // const user_id = jwt.verify(userId, process.env.ACCESS_TOKEN_SECRET);
+  const user = await User.findById({ _id: userId })
+    .populate({
+      path: "savedPost",
+      model: Post,
+      populate: { path: "author", select: "avatar fullName" },
+      options: { sort: { createdAt: -1 } },
+    })
+    .select("savedPost")
+    .exec();
+  // console.log(user);
   res.status(200).json(user);
+});
+//follow user
+const followUser = asyncHandler(async (req, res) => {
+  try {
+    const { currentUserId, targetUserId } = req.params;
+
+    // Validate input parameters
+    if (!currentUserId || !targetUserId) {
+      return res.status(400).json({ message: "Invalid user IDs" });
+    }
+
+    // Find both users
+    const [currentuser, targetuser] = await Promise.all([
+      User.findByIdAndUpdate(
+        currentUserId,
+        { $push: { followings: targetUserId } },
+        { new: true }
+      ),
+      User.findByIdAndUpdate(
+        targetUserId,
+        { $push: { followers: currentUserId } },
+        { new: true }
+      ),
+    ]);
+
+    // Check if both users were found and updated
+    if (!currentuser || !targetuser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return updated current user
+    res.status(200).json(currentuser);
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+});
+//unfollowUser
+const unFollowUser = asyncHandler(async (req, res) => {
+  try {
+    const { currentUserId, targetUserId } = req.params;
+
+    // Validate input parameters
+    if (!currentUserId || !targetUserId) {
+      return res.status(400).json({ message: "Invalid user IDs" });
+    }
+
+    // Find both users
+    const [currentuser, targetuser] = await Promise.all([
+      User.findByIdAndUpdate(
+        currentUserId,
+        { $pull: { followings: targetUserId } },
+        { new: true }
+      ),
+      User.findByIdAndUpdate(
+        targetUserId,
+        { $pull: { followers: currentUserId } },
+        { new: true }
+      ),
+    ]);
+
+    // Check if both users were found and updated
+    if (!currentuser || !targetuser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return updated current user
+    res.status(200).json(currentuser);
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 });
 //createComment
 const createComment = asyncHandler(async (req, res) => {
@@ -332,17 +409,18 @@ const createComment = asyncHandler(async (req, res) => {
 const savePost = asyncHandler(async (req, res) => {
   try {
     const { Post_Id, author } = req.params;
-    await Post.updateOne({ _id: Post_Id }, { $set: { isSave: true } });
+    const post = await Post.updateOne(
+      { _id: Post_Id },
+      { $set: { isSave: true } }
+    );
 
     const user = await User.findByIdAndUpdate(
       author,
       {
         $push: { savedPost: Post_Id },
-        $set: { isSave: true },
       },
       { new: true }
     );
-
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: "Error can't save" });
@@ -353,15 +431,19 @@ const savePost = asyncHandler(async (req, res) => {
 const unSavePost = asyncHandler(async (req, res) => {
   try {
     const { Post_Id, author } = req.params;
-    await Post.updateOne({ _id: Post_Id }, { $set: { isSave: true } });
+    // console.log(Post_Id, author);
+    // const userId = jwt.verify(author, process.env.ACCESS_TOKEN_SECRET);
+    // console.log(userId);
+    await Post.updateOne({ _id: Post_Id }, { $set: { isSave: false } });
 
     const user = await User.findByIdAndUpdate(
-      author,
+      { _id: author },
       {
         $pull: { savedPost: Post_Id },
       },
       { new: true }
     );
+    console.log(user);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: "Error can't save" });
@@ -578,4 +660,6 @@ export {
   getSavedPosts,
   deletePost,
   getAllUsers,
+  followUser,
+  unFollowUser,
 };

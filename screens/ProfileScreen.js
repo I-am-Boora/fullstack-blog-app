@@ -123,7 +123,7 @@ const ProfileScreen = ({navigation}) => {
             <Pressable
               style={styles.followerContainer}
               onPress={() => {
-                navigation.navigate('Follower');
+                navigation.navigate('Follower', {title: 'Followers'});
               }}>
               <Text style={[styles.profileName, {color: colors.text}]}>
                 Followers
@@ -135,7 +135,7 @@ const ProfileScreen = ({navigation}) => {
             <Pressable
               style={styles.postContainer}
               onPress={() => {
-                navigation.navigate('Follower');
+                navigation.navigate('Follower', {title: 'Followings'});
               }}>
               <Text style={[styles.profileName, {color: colors.text}]}>
                 Followings

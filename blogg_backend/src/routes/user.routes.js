@@ -6,6 +6,7 @@ import {
   createComment,
   createPost,
   deletePost,
+  followUser,
   getAllUsers,
   getCurrentUser,
   getLoginInfo,
@@ -16,6 +17,7 @@ import {
   registerUser,
   savePost,
   searchPost,
+  unFollowUser,
   unLikePost,
   unSavePost,
   updateAccountDetails,
@@ -62,11 +64,13 @@ router.route("/createComments").post(createComment);
 router.route("/postLike/:post_id/:author").post(likePost);
 router.route("/postUnlike/:post_id/:author").post(unLikePost);
 router.route("/getUserInfo/:userId").get(getLoginInfo);
-router.route("/savePost/:Post_Id/:author").post(savePost);
-router.route("/unSavePost/:Post_Id/:author").post(unSavePost);
+router.route("/savePost/:Post_Id/:author").put(savePost);
+router.route("/unSavePost/:Post_Id/:author").put(unSavePost);
 router.route("/getSavedPosts/:userId").post(getSavedPosts);
-router.route("/deletePost/:post_id/:user_id").put(deletePost);
+router.route("/deletePost/:post_id").delete(deletePost);
 router.route("/getAllusers/:user").post(getAllUsers);
+router.route("/follow/:currentUserId/:targetUserId").post(followUser);
+router.route("/unFollow/:currentUserId/:targetUserId").post(unFollowUser);
 
 router
   .route("/updateProfilePhoto/:userId")

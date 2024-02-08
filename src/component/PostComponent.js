@@ -5,8 +5,6 @@ import {useTheme} from '@react-navigation/native';
 
 const PostComponent = ({item, navigation, calculateTimeAgo}) => {
   const {colors} = useTheme();
-  // const onPressHandle = title => {
-  // };
   const sendPostDetail = async (Post_Id, userInfo) => {
     navigation.navigate('PostDetail', {Post_Id, userInfo});
   };
@@ -17,7 +15,6 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
       style={[
         styles.postContainer,
         {
-          // borderColor: colors.borderColor,
           backgroundColor: colors.secondaryBackground,
         },
       ]}>
@@ -43,14 +40,11 @@ const PostComponent = ({item, navigation, calculateTimeAgo}) => {
               width: scale(70),
               height:
                 item.title.length > 35 ? verticalScale(90) : verticalScale(70),
-              // borderWidth: 0.7,
               borderRadius: 8,
               justifyContent: 'center',
               alignItems: 'center',
               backgroundColor: colors.imageIconColor,
-              // borderColor: 'black',
             }}>
-            {console.log(item.title.length)}
             <Text
               style={{
                 fontSize: moderateScale(40),

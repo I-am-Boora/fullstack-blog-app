@@ -9,6 +9,7 @@ import {userContext} from '../utils/UserContextProvider';
 const FollowerContainer = ({item}) => {
   const [isClicked, setIsClicked] = useState(false);
   const [isFollow, setIsFollow] = useState([]);
+  const [allUser, setAllUser] = useState([]);
   const {colors} = useTheme();
   const {loginInfo} = useContext(userContext);
   const {setFollowingCount} = useContext(userContext);
@@ -26,10 +27,11 @@ const FollowerContainer = ({item}) => {
           .then(response => {
             if (response.data) {
               const updatedFollowings = response.data.followings;
-              setIsFollow(updatedFollowings);
+              // setIsFollow(updatedFollowings);
+              setAllUser(updatedFollowings);
               setFollowingCount(response.data.followings.length);
-              setIsClicked(updatedFollowings.includes(targentUserId));
-              console.log(updatedFollowings);
+              setIsClicked(!isClicked);
+              // console.log(updatedFollowings);
             }
           })
           .catch(error => {
@@ -47,10 +49,11 @@ const FollowerContainer = ({item}) => {
           .then(response => {
             if (response.data) {
               const updatedFollowings = response.data.followings;
-              setIsFollow(updatedFollowings);
+              // setIsFollow(updatedFollowings);
+              setAllUser(updatedFollowings);
               setFollowingCount(response.data.followings.length);
-              setIsClicked(updatedFollowings.includes(targentUserId));
-              console.log(updatedFollowings);
+              setIsClicked(!isClicked);
+              // console.log(updatedFollowings);
             }
           })
           .catch(error => {
@@ -63,7 +66,6 @@ const FollowerContainer = ({item}) => {
   };
   useEffect(() => {
     handleFollow();
-   
   }, []);
 
   return (
@@ -119,7 +121,7 @@ const FollowerContainer = ({item}) => {
               fontSize: moderateScale(16),
               color: isClicked ? '#7ab317' : colors.text,
             }}>
-            {isClicked ? 'following' : 'follow'}
+            {allUser.includes(item._id) ? 'following' : 'follow'}
           </Text>
         </Pressable>
       </View>

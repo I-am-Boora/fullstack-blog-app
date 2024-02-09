@@ -141,7 +141,10 @@ const getLoginInfo = asyncHandler(async (req, res) => {
       model: User,
       select: "fullName avatar",
     })
-    .populate({ path: "posts", model: Post })
+    .populate({
+      path: "posts",
+      model: Post,
+    })
     .exec();
   // console.log(user);
 

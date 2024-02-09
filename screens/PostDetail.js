@@ -267,17 +267,56 @@ const PostDetail = () => {
                 columnGap: 5,
                 marginRight: scale(10),
               }}>
+              <View
+                style={{
+                  // backgroundColor: 'blue',
+                  width: 55,
+                  height: 30,
+                }}>
+                <View
+                  style={{
+                    position: 'absolute',
+                    backgroundColor: '#ffc6a5',
+                    width: 30,
+                    height: 30,
+                    borderRadius: 30,
+                    zIndex: 10,
+                  }}
+                />
+                <View
+                  style={{
+                    position: 'absolute',
+                    backgroundColor: '#b3e099',
+                    width: 30,
+                    left: 15,
+                    height: 30,
+                    borderRadius: 30,
+                    zIndex: -1,
+                  }}
+                />
+                <View
+                  style={{
+                    position: 'absolute',
+                    backgroundColor: '#a8a39d',
+                    width: 30,
+                    left: 25,
+                    height: 30,
+                    borderRadius: 30,
+                    zIndex: -10,
+                  }}
+                />
+              </View>
               {postDetail.isLike ? (
                 <Icon
                   name="heart"
-                  size={22}
+                  size={24}
                   color={'red'}
                   onPress={handlePostUnlike}
                 />
               ) : (
                 <Icon
                   name="heart-outline"
-                  size={22}
+                  size={24}
                   color={'red'}
                   onPress={handlePostLike}
                 />

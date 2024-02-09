@@ -108,6 +108,7 @@ const App = () => {
           name="Saved"
           component={SavedScreen}
           options={{
+            headerShown: false,
             tabBarIcon: ({focused, color, size}) => (
               <TabBarIcon
                 name="heart"

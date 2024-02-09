@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import axios from 'axios';
 import ProfilePost from '../src/component/ProfilePost';
+import {calculateTimeAgo} from '../src/utils/utilityFunction';
 
 const ProfileScreen = ({navigation}) => {
   const [userInfo, setUserInfo] = useState(null);
@@ -80,16 +81,17 @@ const ProfileScreen = ({navigation}) => {
   };
 
   return loginInfo ? (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      showsVerticalScrollIndicator={false}>
       <Pressable
         onPress={handleLogout}
         style={{
           backgroundColor: colors.secondaryBackground,
-          // height: 40,
           width: '100%',
           justifyContent: 'center',
           alignItems: 'center',
-          padding: moderateScale(5),
+          padding: moderateScale(10),
           borderRadius: moderateScale(15),
           marginTop: verticalScale(10),
           elevation: 4,
@@ -113,9 +115,26 @@ const ProfileScreen = ({navigation}) => {
           <Text
             style={[
               styles.profileName,
-              {color: colors.text, fontSize: moderateScale(12)},
+              {
+                color: colors.text,
+                fontSize: moderateScale(18),
+                textTransform: 'capitalize',
+                marginTop: verticalScale(10),
+              },
             ]}>
             {loginInfo?.user?.fullName}
+          </Text>
+          <View style={{flexDirection: 'row', paddingBottom: verticalScale(3)}}>
+            <Text style={{fontSize: moderateScale(14)}}>
+              {loginInfo?.user?.username} |{' '}
+            </Text>
+            <Text style={{fontSize: moderateScale(14)}}>
+              {loginInfo?.user?.email}
+            </Text>
+          </View>
+
+          <Text style={{marginBottom: verticalScale(20)}}>
+            joined {calculateTimeAgo(loginInfo?.user?.createdAt)}
           </Text>
         </View>
         <View style={styles.rightContainer}>
@@ -125,30 +144,26 @@ const ProfileScreen = ({navigation}) => {
               onPress={() => {
                 navigation.navigate('Follower', {title: 'Followers'});
               }}>
-              <Text style={[styles.profileName, {color: colors.text}]}>
-                Followers
-              </Text>
-              <Text style={styles.follower}>
+              <Text style={[styles.countTitle, {color: colors.text}]}>
                 {loginInfo?.user?.followers?.length}
               </Text>
+              <Text style={styles.follower}>followers</Text>
             </Pressable>
             <Pressable
               style={styles.postContainer}
               onPress={() => {
                 navigation.navigate('Follower', {title: 'Followings'});
               }}>
-              <Text style={[styles.profileName, {color: colors.text}]}>
-                Followings
-              </Text>
-              <Text style={styles.post}>
+              <Text style={[styles.countTitle, {color: colors.text}]}>
                 {loginInfo?.user?.followings?.length}
               </Text>
+              <Text style={styles.post}>followings</Text>
             </Pressable>
             <View style={styles.postContainer}>
-              <Text style={[styles.profileName, {color: colors.text}]}>
-                Posts
+              <Text style={[styles.countTitle, {color: colors.text}]}>
+                {loginInfo?.user?.posts?.length}
               </Text>
-              <Text style={styles.post}>{loginInfo?.user?.posts?.length}</Text>
+              <Text style={styles.post}>posts</Text>
             </View>
           </View>
         </View>
@@ -179,29 +194,28 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // alignItems: 'center',
+
     paddingHorizontal: scale(10),
   },
   profileContainer: {
-    flexDirection: 'row',
     justifyContent: 'center',
-    elevation: 4,
+    alignItems: 'center',
+    elevation: 1,
     padding: moderateScale(10),
     marginTop: verticalScale(10),
     borderRadius: moderateScale(15),
   },
-  leftContainer: {alignItems: 'center', width: '30%'},
+  leftContainer: {alignItems: 'center'},
   rightContainer: {width: '70%'},
   image: {
-    width: scale(60),
-    height: verticalScale(60),
-    borderRadius: moderateScale(60),
+    width: scale(100),
+    height: verticalScale(100),
+    borderRadius: moderateScale(100),
     resizeMode: 'cover',
   },
   profileName: {
     fontSize: moderateScale(14),
     fontFamily: 'Poppins-Medium',
-    paddingVertical: verticalScale(5),
   },
   followerandpost: {
     flexDirection: 'row',
@@ -217,16 +231,7 @@ const styles = StyleSheet.create({
     fontSize: moderateScale(16),
     fontWeight: '500',
   },
-  postSection: {
-    // flex: 1,
-    // borderRadius: moderateScale(15),
-    // borderWidth: moderateScale(0.4),
-    // width: '100%',
-    // marginVertical: verticalScale(10),
-    // padding: scale(5),
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
+  postSection: {},
   allpost: {
     borderRadius: moderateScale(15),
     marginTop: verticalScale(10),
@@ -235,6 +240,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    elevation: 4,
+    elevation: 1,
+  },
+  countTitle: {
+    fontSize: moderateScale(20),
+    fontFamily: 'Poppins-Medium',
   },
 });

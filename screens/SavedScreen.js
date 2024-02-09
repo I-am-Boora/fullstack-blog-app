@@ -1,40 +1,25 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, Image} from 'react-native';
 import React, {useContext, useEffect, useState, useTransition} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PostSaveComponent from '../src/component/PostSaveComponent';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useTheme} from '@react-navigation/native';
 import PostComponent from '../src/component/PostComponent';
 import {calculateTimeAgo} from '../src/utils/utilityFunction';
 import {userContext} from '../src/utils/UserContextProvider';
+import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 
 const SavedScreen = () => {
-  const [allPost, setAllPost] = useState([]);
   const {loginInfo} = useContext(userContext);
   const navigation = useNavigation();
-  // const getSavedPosts = async () => {
-  //   try {
-  //     const userId = await AsyncStorage.getItem('userId');
-  //     await axios
-  //       .post(`http://10.0.2.2:8080/users/getSavedPosts/${userId}`)
-  //       .then(response => {
-  //         if (response.data) {
-  //           setAllPost(response.data);
-  //           // console.log(response.data);
-  //         } else {
-  //           console.log('Error: Invalid response data format');
-  //         }
-  //       });
-  //   } catch (error) {
-  //     console.log('Error getting saved posts', error);
-  //   }
-  // };
-  // useEffect(() => {
-  //   getSavedPosts();
-  // }, []);
+  const {colors} = useTheme();
   return (
-    <View>
-      {loginInfo?.user?.savedPost &&
+    <ScrollView style={{flex: 1}}>
+      <Text style={[styles.title, {color: colors.text}]}>Saved Posts</Text>
+      <Text style={styles.subTitle}>
+        Total saved {loginInfo?.user?.savedPost.length}
+      </Text>
+      {loginInfo?.user?.savedPost ? (
         loginInfo?.user?.savedPost.map((item, index) => {
           return (
             <PostComponent
@@ -44,11 +29,44 @@ const SavedScreen = () => {
               calculateTimeAgo={calculateTimeAgo}
             />
           );
-        })}
-    </View>
+        })
+      ) : (
+        <View
+          style={{
+            // flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'blue',
+            width: 100,
+            height: 100,
+          }}>
+          <Image
+            source={require('../src/assets/images/empty-box.png')}
+            style={styles.image}
+          />
+        </View>
+      )}
+    </ScrollView>
   );
 };
 
 export default SavedScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  title: {
+    fontSize: moderateScale(40),
+    fontFamily: 'Lora-VariableFont_wght',
+    marginVertical: verticalScale(5),
+    paddingHorizontal: scale(10),
+  },
+  subTitle: {
+    paddingHorizontal: scale(10),
+    fontSize: moderateScale(16),
+    fontFamily: 'Poppins-Regular',
+  },
+  image: {
+    width: scale(80),
+    height: verticalScale(80),
+    resizeMode: 'cover',
+  },
+});

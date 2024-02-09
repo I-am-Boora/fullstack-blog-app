@@ -39,7 +39,7 @@ const PostDetail = () => {
   const route = useRoute();
   const {Post_Id, userInfo} = route.params;
   const {height} = Dimensions.get('window');
-
+  const {postSaved, setPostSaved} = useContext(userContext);
   const handleComment = async () => {
     if (!author) {
       const userId = await AsyncStorage.getItem('userId');
@@ -91,7 +91,7 @@ const PostDetail = () => {
       console.error('Error fetching comments:', error);
       // setLoading(false);
     }
-  }, [Post_Id, postDetail, saved]);
+  }, [Post_Id, postDetail, postSaved]);
 
   useEffect(() => {
     fetchPostDetail();
@@ -129,7 +129,7 @@ const PostDetail = () => {
         .put(`http://10.0.2.2:8080/users/savePost/${Post_Id}/${author}`)
         .then(response => {
           if (response.data) {
-            setSaved(response.data.isSave);
+            setPostSaved(response.data.isSave);
             setShowActivity(false);
           }
         })
@@ -146,7 +146,7 @@ const PostDetail = () => {
         `http://10.0.2.2:8080/users/unSavePost/${Post_Id}/${author}`,
       );
       if (response.data) {
-        setSaved(response.data.isSave);
+        setPostSaved(response.data.isSave);
         setShowActivity(false);
       }
     } catch (error) {

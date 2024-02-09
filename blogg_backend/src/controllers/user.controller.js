@@ -129,6 +129,7 @@ const getLoginInfo = asyncHandler(async (req, res) => {
     .populate({
       path: "savedPost",
       model: Post,
+      options: { sort: { createdAt: -1 } },
     })
     .populate({
       path: "followings",
@@ -293,6 +294,7 @@ const comment = asyncHandler(async (req, res) => {
 //get saved posts
 const getSavedPosts = asyncHandler(async (req, res) => {
   const { userId } = req.params;
+
   // const user_id = jwt.verify(userId, process.env.ACCESS_TOKEN_SECRET);
   const user = await User.findById({ _id: userId })
     .populate({
@@ -303,7 +305,7 @@ const getSavedPosts = asyncHandler(async (req, res) => {
     })
     .select("savedPost")
     .exec();
-  // console.log(user);
+
   res.status(200).json(user);
 });
 //follow user
@@ -317,26 +319,26 @@ const followUser = asyncHandler(async (req, res) => {
     }
 
     // Find both users
-    const [currentuser, targetuser] = await Promise.all([
-      User.findByIdAndUpdate(
-        currentUserId,
-        { $push: { followings: targetUserId } },
-        { new: true }
-      ),
-      User.findByIdAndUpdate(
-        targetUserId,
-        { $push: { followers: currentUserId } },
-        { new: true }
-      ),
-    ]);
+
+    const currUser = await User.findByIdAndUpdate(
+      currentUserId,
+      { $push: { followings: targetUserId } },
+      { new: true }
+    );
+
+    const tarUser = await User.findByIdAndUpdate(
+      targetUserId,
+      { $push: { followers: currentUserId } },
+      { new: true }
+    );
 
     // Check if both users were found and updated
-    if (!currentuser || !targetuser) {
+    if (!currUser || !tarUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Return updated current user
-    res.status(200).json(currentuser);
+    res.status(200).json(currUser);
   } catch (error) {
     console.error("Error following user:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -353,26 +355,25 @@ const unFollowUser = asyncHandler(async (req, res) => {
     }
 
     // Find both users
-    const [currentuser, targetuser] = await Promise.all([
-      User.findByIdAndUpdate(
-        currentUserId,
-        { $pull: { followings: targetUserId } },
-        { new: true }
-      ),
-      User.findByIdAndUpdate(
-        targetUserId,
-        { $pull: { followers: currentUserId } },
-        { new: true }
-      ),
-    ]);
+    const currUser = await User.findByIdAndUpdate(
+      currentUserId,
+      { $push: { followings: targetUserId } },
+      { new: true }
+    );
+
+    const tarUser = await User.findByIdAndUpdate(
+      targetUserId,
+      { $push: { followers: currentUserId } },
+      { new: true }
+    );
 
     // Check if both users were found and updated
-    if (!currentuser || !targetuser) {
+    if (!currUser || !tarUser) {
       return res.status(404).json({ message: "User not found" });
     }
 
     // Return updated current user
-    res.status(200).json(currentuser);
+    res.status(200).json(currUser);
   } catch (error) {
     console.error("Error following user:", error);
     res.status(500).json({ message: "Internal server error" });

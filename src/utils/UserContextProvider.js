@@ -9,13 +9,13 @@ const UserContextProvider = ({children}) => {
   const [posts, setPosts] = useState([]);
   const [loginInfo, setLoginInfo] = useState(null);
   const [deletePost, setDeletePost] = useState(0);
+  const [postSaved, setPostSaved] = useState(false);
   const [followingCount, setFollowingCount] = useState(0);
 
   const checkLoginStatus = async () => {
     const token = await AsyncStorage.getItem('authToken');
     if (token) {
       const userId = await AsyncStorage.getItem('userId');
-      // Fetch user data based on the token and setLoginInfo
 
       const response = await axios.get(
         `http:10.0.2.2:8080/users/getUserInfo/${userId}`,
@@ -23,7 +23,6 @@ const UserContextProvider = ({children}) => {
 
       if (response.data) {
         setLoginInfo(response.data);
-
         if (response.data.user.posts) {
           setDeletePost(response.data.user.posts.length);
         }
@@ -32,7 +31,7 @@ const UserContextProvider = ({children}) => {
   };
   useEffect(() => {
     checkLoginStatus();
-  }, [deletePost, followingCount]);
+  }, [deletePost, followingCount, postSaved]);
   return (
     <userContext.Provider
       value={{
@@ -44,6 +43,8 @@ const UserContextProvider = ({children}) => {
         setDeletePost,
         followingCount,
         setFollowingCount,
+        setPostSaved,
+        postSaved,
       }}>
       {children}
     </userContext.Provider>

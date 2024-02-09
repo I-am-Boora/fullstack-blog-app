@@ -63,7 +63,7 @@ const FollowerContainer = ({item}) => {
   };
   useEffect(() => {
     handleFollow();
-    console.log(loginInfo.user.followings);
+   
   }, []);
 
   return (

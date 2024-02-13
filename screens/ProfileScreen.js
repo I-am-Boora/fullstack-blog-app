@@ -176,8 +176,8 @@ const ProfileScreen = ({navigation}) => {
       </View>
       <View style={styles.postSection}>
         {loginInfo?.user?.posts ? (
-          loginInfo?.user?.posts.map(item => (
-            <ProfilePost item={item} key={item._id} />
+          loginInfo?.user?.posts.map((item, index) => (
+            <ProfilePost item={item} key={index.toString()} />
           ))
         ) : (
           <Text style={styles.profileName}>No posts</Text>
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(15),
   },
   leftContainer: {alignItems: 'center'},
-  rightContainer: {width: '70%'},
+  rightContainer: {width: '75%', marginTop: verticalScale(10)},
   image: {
     width: scale(100),
     height: verticalScale(100),
@@ -224,12 +224,14 @@ const styles = StyleSheet.create({
   followerContainer: {justifyContent: 'center', alignItems: 'center'},
   postContainer: {justifyContent: 'center', alignItems: 'center'},
   follower: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     fontWeight: '500',
+    fontFamily: 'Poppins-Medium',
   },
   post: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(14),
     fontWeight: '500',
+    fontFamily: 'Poppins-Medium',
   },
   postSection: {},
   allpost: {

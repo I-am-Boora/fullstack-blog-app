@@ -315,7 +315,8 @@ const getSavedPosts = asyncHandler(async (req, res) => {
 const followUser = asyncHandler(async (req, res) => {
   try {
     const { currentUserId, targetUserId } = req.params;
-
+    console.log("currentUserId", currentUserId);
+    console.log("targetUserId", targetUserId);
     // Validate input parameters
     if (!currentUserId || !targetUserId) {
       return res.status(400).json({ message: "Invalid user IDs" });
@@ -339,7 +340,7 @@ const followUser = asyncHandler(async (req, res) => {
     if (!currUser || !tarUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
+    console.log(currUser);
     // Return updated current user
     res.status(200).json(currUser);
   } catch (error) {
@@ -351,7 +352,8 @@ const followUser = asyncHandler(async (req, res) => {
 const unFollowUser = asyncHandler(async (req, res) => {
   try {
     const { currentUserId, targetUserId } = req.params;
-
+    console.log("currentUserId", currentUserId);
+    console.log("targetUserId", targetUserId);
     // Validate input parameters
     if (!currentUserId || !targetUserId) {
       return res.status(400).json({ message: "Invalid user IDs" });
@@ -374,7 +376,7 @@ const unFollowUser = asyncHandler(async (req, res) => {
     if (!currUser || !tarUser) {
       return res.status(404).json({ message: "User not found" });
     }
-
+    console.log(currUser);
     // Return updated current user
     res.status(200).json(currUser);
   } catch (error) {

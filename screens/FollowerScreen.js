@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, Pressable} from 'react-native';
+import {StyleSheet, Text, View, Pressable, ScrollView} from 'react-native';
 import React, {useCallback, useContext, useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -90,21 +90,29 @@ const FollowerScreen = ({route}) => {
           </Text>
         </Pressable>
       </View>
-      {activeButton === 'All' ? (
-        <View style={styles.allBtnContainer}>
-          {allUsers &&
-            allUsers?.map((item, index) => {
-              return <FollowerContainer item={item} key={index} />;
-            })}
-        </View>
-      ) : activeButton == 'Followings' ? (
-        <View style={styles.allBtnContainer}>
-          {loginInfo.user.followings &&
-            loginInfo.user.followings?.map((item, index) => {
-              return <FollowerContainer item={item} key={index} />;
-            })}
-        </View>
-      ) : null}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {activeButton === 'All' ? (
+          <View style={styles.allBtnContainer}>
+            {allUsers &&
+              allUsers?.map((item, index) => {
+                return <FollowerContainer item={item} key={index.toString()} />;
+              })}
+          </View>
+        ) : activeButton == 'Followings' ? (
+          <View style={styles.allBtnContainer}>
+            {loginInfo?.user?.followings &&
+              loginInfo?.user?.followings?.map((item, index) => {
+                return (
+                  <FollowerContainer
+                    item={item}
+                    key={index.toString()}
+                    index={index}
+                  />
+                );
+              })}
+          </View>
+        ) : null}
+      </ScrollView>
     </View>
   );
 };

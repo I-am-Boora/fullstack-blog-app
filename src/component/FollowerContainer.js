@@ -6,68 +6,84 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {userContext} from '../utils/UserContextProvider';
 
-const FollowerContainer = ({item}) => {
+const FollowerContainer = ({item, index}) => {
   const [isClicked, setIsClicked] = useState(false);
+  const [userID, setuserID] = useState('null');
   const [isFollow, setIsFollow] = useState([]);
   const [allUser, setAllUser] = useState([]);
   const {colors} = useTheme();
   const {loginInfo} = useContext(userContext);
   const {setFollowingCount} = useContext(userContext);
 
-  const handleFollow = async targentUserId => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (!userId) {
-      console.log("userID doesn't exists!!");
-      return;
-    }
-    if (!isClicked) {
-      try {
-        await axios
-          .post(`http://10.0.2.2:8080/users/follow/${userId}/${targentUserId}`)
-          .then(response => {
-            if (response.data) {
-              const updatedFollowings = response.data.followings;
-              // setIsFollow(updatedFollowings);
-              setAllUser(updatedFollowings);
-              setFollowingCount(response.data.followings.length);
-              setIsClicked(!isClicked);
-              // console.log(updatedFollowings);
-            }
-          })
-          .catch(error => {
-            console.log('error handling follow', error);
-          });
-      } catch (error) {
-        console.log('error getting follow user', error);
-      }
-    } else {
-      try {
-        await axios
-          .post(
-            `http://10.0.2.2:8080/users/unFollow/${userId}/${targentUserId}`,
-          )
-          .then(response => {
-            if (response.data) {
-              const updatedFollowings = response.data.followings;
-              // setIsFollow(updatedFollowings);
-              setAllUser(updatedFollowings);
-              setFollowingCount(response.data.followings.length);
-              setIsClicked(!isClicked);
-              // console.log(updatedFollowings);
-            }
-          })
-          .catch(error => {
-            console.log('error handling follow', error);
-          });
-      } catch (error) {
-        console.log('error getting follow user', error);
-      }
+  const handleFollowUser = async targetUserId => {
+    try {
+      await axios
+        .post(`http://10.0.2.2:8080/users/follow/${userID}/${targetUserId}`)
+        .then(response => {
+          if (response.data) {
+            // const updatedFollowings = response.data.followings;
+            // setIsFollow(updatedFollowings);
+            // console.log(response.data);
+            // setAllUser(updatedFollowings);
+            setIsClicked(true);
+            setFollowingCount(response.data.followings.length);
+
+            // console.log(updatedFollowings);
+          }
+        })
+        .catch(error => {
+          console.log('error handling follow', error);
+        });
+    } catch (error) {
+      console.log('error getting follow user', error);
     }
   };
-  useEffect(() => {
-    handleFollow();
-  }, []);
+  const handleUnfollowUser = async targetUserId => {
+    try {
+      await axios
+        .post(`http://10.0.2.2:8080/users/unFollow/${userID}/${targetUserId}`)
+        .then(response => {
+          if (response.data) {
+            // const updatedFollowings = response.data.followings;
+            // setIsFollow(updatedFollowings);
+            // console.log(response.data);
+            // setAllUser(updatedFollowings);
+            setIsClicked(false);
+            setFollowingCount(response.data.followings.length);
 
+            // console.log(updatedFollowings);
+          }
+        })
+        .catch(error => {
+          console.log('error handling follow', error);
+        });
+    } catch (error) {
+      console.log('error getting follow user', error);
+    }
+  };
+
+  useEffect(() => {
+    const getUserId = async () => {
+      const userId = await AsyncStorage.getItem('userId');
+
+      setuserID(userId);
+      if (loginInfo?.user?.followings.includes(item._id)) {
+        setIsClicked(true);
+      } else {
+        setIsClicked(false);
+      }
+      // if (!userId) {
+      //   console.log("userID doesn't exists!!");
+      //   return;
+      // }
+    };
+    getUserId();
+    console.log('isclickd', isClicked);
+  }, []);
+  // if (allUser) {
+  //   console.log(allUser);
+  // }
+  // console.log(userID);
   return (
     <View
       style={[
@@ -108,22 +124,36 @@ const FollowerContainer = ({item}) => {
             <Text style={{fontSize: moderateScale(14)}}>{item?.username}</Text>
           </View>
         </View>
-        <Pressable
-          style={[
-            styles.followContainer,
-            {borderColor: isClicked ? '#7ab317' : 'grey'},
-          ]}
-          onPress={() => {
-            handleFollow(item._id);
-          }}>
-          <Text
-            style={{
-              fontSize: moderateScale(16),
-              color: isClicked ? '#7ab317' : colors.text,
+        {/* {console.log(loginInfo.user.followings[index])} */}
+        {isClicked ? (
+          <Pressable
+            style={[styles.followContainer, {borderColor: '#7ab317'}]}
+            onPress={() => {
+              handleUnfollowUser(item._id);
             }}>
-            {allUser.includes(item._id) ? 'following' : 'follow'}
-          </Text>
-        </Pressable>
+            <Text
+              style={{
+                fontSize: moderateScale(16),
+                color: '#7ab317',
+              }}>
+              following
+            </Text>
+          </Pressable>
+        ) : (
+          <Pressable
+            style={[styles.followContainer, {borderColor: 'grey'}]}
+            onPress={() => {
+              handleFollowUser(item._id);
+            }}>
+            <Text
+              style={{
+                fontSize: moderateScale(16),
+                color: colors.text,
+              }}>
+              follow
+            </Text>
+          </Pressable>
+        )}
       </View>
     </View>
   );
